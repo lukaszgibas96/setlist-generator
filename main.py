@@ -2,26 +2,14 @@ import csv
 
 def main():
 
-    songs = []
-
-# Create python database - list of dictionaries
-    with open("songs.csv") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            songs.append({"number": row["number"], "title": row["title"], "duration": row["duration"]})
-
+    songs = load_songs_from_csv()
 
     num_setlist = get_setlist_from_user()
 
-    setlist = []
-    setlist_duration = 0
 
-    for song_number in num_setlist:
-        
-        for row in songs:
-            if row["number"] == str(song_number):
-                  setlist.append({"number": row["number"], "title": row["title"]})
-                  setlist_duration += int(convert_time_to_sec(row["duration"]))
+
+    setlist , setlist_duration = create_setlist(num_setlist, songs)
+    
 
     print(setlist)
     print(setlist_duration)
@@ -30,6 +18,20 @@ def main():
     print(f"Duration: {duration}")
 
 
+
+
+# ---------------------- function definitions
+
+
+def load_songs_from_csv():
+
+    songs = []
+    
+    with open("songs.csv") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                songs.append({"number": row["number"], "title": row["title"], "duration": row["duration"]})
+    return songs
 
 def get_setlist_from_user():
     setlist = []
@@ -41,6 +43,19 @@ def get_setlist_from_user():
 
     return setlist
 
+def create_setlist(user_setlist, dataset):
+    setlist = []
+    setlist_duration = 0
+     
+    for song_number in user_setlist:
+             
+        for row in dataset:
+            if row["number"] == str(song_number):
+                setlist.append({"number": row["number"], "title": row["title"]})
+                setlist_duration += int(convert_time_to_sec(row["duration"]))
+    return setlist, setlist_duration
+
+     
 def convert_time_to_sec(str_time):
      minutes, seconds = str_time.split(":")
      total = int(minutes) * 60 + int(seconds)
