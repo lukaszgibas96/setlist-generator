@@ -27,9 +27,8 @@ def run_application():
     
                 setlist , setlist_duration = create_setlist(num_setlist, songs)
         
-                print(setlist)
-                print(setlist_duration)
                 duration = convert_sec_to_time(setlist_duration)
+                print(f"Final setlist:\n {setlist}")
                 print(f"Duration: {duration}")
                 
             elif menu_choice == 2:
