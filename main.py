@@ -10,12 +10,25 @@ def main():
         for row in reader:
             songs.append({"number": row["number"], "title": row["title"], "duration": row["duration"]})
 
-    for row in songs:
-            if row["number"] == "2":
-                print(row["title"])
-    
-    setlist = get_setlist_from_user()
+
+    num_setlist = get_setlist_from_user()
+
+    setlist = []
+    setlist_duration = 0
+
+    for song_number in num_setlist:
+        
+        for row in songs:
+            if row["number"] == str(song_number):
+                  setlist.append({"number": row["number"], "title": row["title"]})
+                  setlist_duration += int(convert_time_to_sec(row["duration"]))
+
     print(setlist)
+    print(setlist_duration)
+
+    duration = convert_sec_to_time(setlist_duration)
+    print(f"Duration: {duration}")
+
 
 
 def get_setlist_from_user():
@@ -28,14 +41,16 @@ def get_setlist_from_user():
 
     return setlist
 
-        
-    print(f"setlista to {input_setlist}")
+def convert_time_to_sec(str_time):
+     minutes, seconds = str_time.split(":")
+     total = int(minutes) * 60 + int(seconds)
+     return total
 
+def convert_sec_to_time(sec_time):
+    minutes = sec_time // 60
+    seconds = sec_time % 60
 
-
-
-
-
+    return f"{minutes}min {seconds}sec"
 
     
 
