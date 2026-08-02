@@ -20,12 +20,11 @@ def main():
 
 def get_setlist_from_user():
     setlist = []
-    setlist.append(int(input("Choose first song: ")))
-    x = 1
+    x = int(input("Choose first song: "))
+
     while x != 0:
+        setlist.append(x)
         x = int(input("Choose next song: "))
-        if not x == 0:
-            setlist.append(x)
 
     return setlist
 
