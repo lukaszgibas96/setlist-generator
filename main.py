@@ -14,20 +14,20 @@ def main():
             if row["number"] == "2":
                 print(row["title"])
     
-    setlist = input_setlist()
+    setlist = get_setlist_from_user()
     print(setlist)
 
 
-def input_setlist():
-    input_setlist = []
-    input_setlist.append(int(input("Choose first song: ")))
+def get_setlist_from_user():
+    setlist = []
+    setlist.append(int(input("Choose first song: ")))
     x = 1
     while x != 0:
+        x = int(input("Choose next song: "))
         if not x == 0:
-            x = int(input("Choose next song: "))
-            input_setlist.append(x)
+            setlist.append(x)
 
-    return input_setlist
+    return setlist
 
         
     print(f"setlista to {input_setlist}")
