@@ -27,6 +27,7 @@ def run_application():
                 
             elif menu_choice == 2:
                 add_song_to_database(songs)
+                songs = load_songs_from_csv()
 
             elif menu_choice == 3:
                 show_database(songs)
@@ -121,15 +122,47 @@ def show_database(songs):
 
 def add_song_to_database(songs):
 
-    new_number = input("New song's number: ")
-    new_title = input("New song's title: ")
-    new_duration = input("Duration of new song: ")
+    while True:
 
-    with open("songs.csv", "a") as file:
-        writer = csv.DictWriter(file)
+        new_number = input("New song's number: ")
+
+        if song_number_exists(new_number, songs):
+            print("This song number already exists in database.")
+
+        else:
+            new_title = input("New song's title: ")
+            new_duration = input("Duration of new song: ")
+            add_song_to_CSV(new_number, new_title, new_duration)
+
+        if not ask_to_continue():
+            break
+
+def song_number_exists(number,database):
+
+    for row in database:
+        if row["number"] == number:
+            return True
+    return False
+
+def ask_to_continue():
+    next_step = input("Do you want add another song? < YES / NO >")
+    
+    if next_step == "YES":
+        return True
+    else:
+        return False
+
+def add_song_to_CSV(new_number,new_title,new_duration):
+    
+    with open("songs.csv", "a",newline="\n") as file:
+        writer = csv.DictWriter(file, fieldnames= ["number", "title", "duration"])
         writer.writerow({"number": new_number, "title": new_title, "duration": new_duration})
 
+# ---------------------- validation
 
+
+
+# ----------------------
 
 if __name__ == "__main__":
     main()
