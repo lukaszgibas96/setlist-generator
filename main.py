@@ -35,7 +35,7 @@ def run_application():
             elif menu_choice == 0:
                 say_goodbye()
                 break 
-    
+
     
 
 def show_menu():
@@ -158,7 +158,7 @@ def add_song_to_CSV(new_number,new_title,new_duration):
         writer = csv.DictWriter(file, fieldnames= ["number", "title", "duration"])
         writer.writerow({"number": new_number, "title": new_title, "duration": new_duration})
 
-# ---------------------- validation
+# ---------------------- validation functions
 
 
 
