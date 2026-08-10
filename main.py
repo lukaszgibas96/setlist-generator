@@ -26,12 +26,14 @@ def run_application():
                 generate_setlist(songs)
                 
             elif menu_choice == 2:
-                add_song_to_database(songs)
-                songs = load_songs_from_csv()
-
-            elif menu_choice == 3:
                 show_database(songs)
 
+            elif menu_choice == 3:
+                add_song_to_database(songs)
+
+            elif menu_choice == 4:
+                edit_song_in_database(songs)
+                
             elif menu_choice == 0:
                 say_goodbye()
                 break 
@@ -45,9 +47,10 @@ def show_menu():
               SETLIST GENERATOR
     ======================================
 
-    1. Generate setlist.
-    2. Add song.
-    3. Show database.
+    1. Generate setlist
+    2. Show database
+    3. Add song
+    4. Edit song
     0. Exit
     ---------------------------------------
     """)
@@ -132,9 +135,11 @@ def add_song_to_database(songs):
         else:
             new_title = input("New song's title: ")
             new_duration = input("Duration of new song: ")
-            add_song_to_CSV(new_number, new_title, new_duration)
+            songs.append({"number": new_number, "title": new_title, "duration": new_duration})
 
-        if not ask_to_continue():
+            save_songs_to_CSV(songs)
+
+        if not ask_to_continue_add():
             break
 
 def song_number_exists(number,database):
@@ -144,7 +149,7 @@ def song_number_exists(number,database):
             return True
     return False
 
-def ask_to_continue():
+def ask_to_continue_add():
     next_step = input("Do you want add another song? < YES / NO >")
     
     if next_step == "YES":
@@ -152,11 +157,54 @@ def ask_to_continue():
     else:
         return False
 
-def add_song_to_CSV(new_number,new_title,new_duration):
+def ask_to_continue_edit():
+    next_step = input("Do you want edit another song? < YES / NO >")
     
-    with open("songs.csv", "a",newline="\n") as file:
+    if next_step == "YES":
+        return True
+    else:
+        return False
+
+def save_songs_to_CSV(songs):
+    
+    with open("songs.csv", "w",newline="\n") as file:
         writer = csv.DictWriter(file, fieldnames= ["number", "title", "duration"])
-        writer.writerow({"number": new_number, "title": new_title, "duration": new_duration})
+        writer.writeheader()
+        writer.writerows(songs)
+        say_save_completed()
+
+def edit_song_in_database(songs):
+
+    while True:
+        edit_number = input("What song would you edit?")
+
+        if song_number_exists(edit_number,songs):
+
+            edit_title = input("<EDIT> Song's title: ")
+            edit_duration = input("<EDIT> Duration of song: ")
+
+            overwrite_song_title_and_duration(edit_number,edit_title,edit_duration,songs)  
+
+            save_songs_to_CSV(songs) 
+
+        else:
+            print("This song does not exist in database")
+
+        if not ask_to_continue_edit():
+            break
+
+def overwrite_song_title_and_duration(edit_number,edit_title,edit_duration,songs):
+    for row in songs:
+            if row["number"] == edit_number:
+                row.update({"title": edit_title, "duration": edit_duration})
+                break
+
+def say_save_completed():
+    print('''
+    
+    ======================================
+             SONGS SAVED TO CSV
+    ======================================''')
 
 # ---------------------- validation functions
 
