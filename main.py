@@ -1,16 +1,11 @@
 import csv
 import sys
+from pdf_generator import generate_pdf_file
 
 def main():
 
     run_application()
     
-
-    
-        
-
-    
-
 
 
 # ---------------------- function definitions
@@ -23,8 +18,13 @@ def run_application():
             show_menu()
             menu_choice = get_menu_choice()
             if menu_choice == 1:
-                generate_setlist(songs)
-                
+
+                event_date, event_place = get_event_info_from_user()
+                setlist, setlist_duration = generate_setlist(songs)
+                generate_pdf_file(setlist,setlist_duration,event_date,event_place)
+                say_pdf_saved()
+
+
             elif menu_choice == 2:
                 show_database(songs)
 
@@ -33,12 +33,10 @@ def run_application():
 
             elif menu_choice == 4:
                 edit_song_in_database(songs)
-                
+
             elif menu_choice == 0:
                 say_goodbye()
                 break 
-
-    
 
 def show_menu():
 
@@ -68,7 +66,10 @@ def load_songs_from_csv():
 def get_menu_choice():
      return int(input("Choose action: "))
 
-def get_setlist_from_user():
+def get_setlist_from_user(songs):
+
+    show_database(songs)
+
     setlist = []
     x = int(input("Choose first song: "))
 
@@ -77,6 +78,13 @@ def get_setlist_from_user():
         x = int(input("Choose next song: "))
 
     return setlist
+
+def get_event_info_from_user():
+
+    date = input("Event date (DD.MM.YYYY): ")
+    place = input("Event place: ")
+
+    return date,place
 
 def create_setlist(user_setlist, dataset):
     setlist = []
@@ -91,24 +99,18 @@ def create_setlist(user_setlist, dataset):
     return setlist, setlist_duration
 
 def generate_setlist(songs):
-    num_setlist = get_setlist_from_user()
+    num_setlist = get_setlist_from_user(songs)
         
     setlist , setlist_duration = create_setlist(num_setlist, songs)
             
-    duration = convert_sec_to_time(setlist_duration)
     print(f"Final setlist:\n {setlist}")
-    print(f"Duration: {duration}")
+    print(f"Duration: {setlist_duration}")
+    return setlist, setlist_duration
 
 def convert_time_to_sec(str_time):
      minutes, seconds = str_time.split(":")
      total = int(minutes) * 60 + int(seconds)
      return total
-
-def convert_sec_to_time(sec_time):
-    minutes = sec_time // 60
-    seconds = sec_time % 60
-
-    return f"{minutes}min {seconds}sec"
 
 def say_goodbye():
     print("""
@@ -205,6 +207,14 @@ def say_save_completed():
     ======================================
              SONGS SAVED TO CSV
     ======================================''')
+
+def say_pdf_saved():
+    print('''
+    
+    ======================================
+                  PDF SAVED
+    ======================================''')
+
 
 # ---------------------- validation functions
 
