@@ -6,18 +6,23 @@ import datetime as dt
 
 
 image_location = "assets/logo.png"
-duration = 6500
-date = "2026-07-22"
-place = "GaragePub"
-setlist = [{'number': '1', 'title': 'droga'}, 
-           {'number': '2', 'title': 'bez slow'}, 
-           {'number': '3', 'title': 'tesknota'}, 
-           {'number': '4', 'title': 'popioly'}]
-soundcheck = {'number': '5', 'title': 'chwila'}
-bis = [ {'number': '6', 'title': 'cykl'}, 
-        {'number': '7', 'title': 'sam'}]
+#duration = 6500
+#date = "2026-07-22"
+#place = "GaragePub"
+#setlist = [{'number': '1', 'title': 'droga'}, 
+#           {'number': '2', 'title': 'bez slow'}, 
+#           {'number': '3', 'title': 'tesknota'}, 
+#           {'number': '4', 'title': 'popioly'}]
+#soundcheck = {'number': '5', 'title': 'chwila'}
+#bis = [ {'number': '6', 'title': 'cykl'}, 
+#        {'number': '7', 'title': 'sam'}]
 
-def generate_pdf_file(setlist, setlist_duration, date, place,soundcheck,bis):
+def generate_pdf_file(date,
+                      place,
+                      soundcheck,
+                      setlist, 
+                      setlist_duration,
+                      bis):
     
     pdf = FPDF()
 
@@ -132,5 +137,5 @@ def convert_sec_to_time(sec_time):
 # =======================
 
 #Only for test
-generate_pdf_file(setlist,duration,date,place,soundcheck,bis)
+#generate_pdf_file(setlist,duration,date,place,soundcheck,bis)
 

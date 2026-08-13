@@ -20,8 +20,15 @@ def run_application():
             if menu_choice == 1:
 
                 event_date, event_place = get_event_info_from_user()
+                soundcheck = get_soundcheck_from_user(songs)
                 setlist, setlist_duration = generate_setlist(songs)
-                generate_pdf_file(setlist,setlist_duration,event_date,event_place)
+                bis = generate_bis_list(songs)
+                generate_pdf_file(event_date,
+                                  event_place,
+                                  soundcheck,
+                                  setlist,
+                                  setlist_duration,
+                                  bis)
                 say_pdf_saved()
 
 
@@ -81,7 +88,7 @@ def get_setlist_from_user(songs):
 
 def get_event_info_from_user():
 
-    date = input("Event date (DD.MM.YYYY): ")
+    date = input("Event date (YYYY-MM-DD): ")
     place = input("Event place: ")
 
     return date,place
@@ -214,6 +221,36 @@ def say_pdf_saved():
     ======================================
                   PDF SAVED
     ======================================''')
+
+def get_soundcheck_from_user(songs):
+
+    soundcheck = {}
+    show_database(songs)
+    soundcheck_song = input("Choose soundcheck song: ")
+    for row in songs:
+        if soundcheck_song == row["number"]:
+            soundcheck = {"number": row["number"], "title": row["title"]}
+    return soundcheck
+
+def get_bis_list_from_user(songs):
+
+    show_database(songs)
+
+    bis = []
+    x = int(input("Choose first bis: "))
+
+    while x != 0:
+        bis.append(x)
+        x = int(input("Choose next bis: "))
+
+    return bis
+
+def generate_bis_list(songs):
+    bis_numbers = get_bis_list_from_user(songs) 
+    bis_list , bis_list_duration = create_setlist(bis_numbers, songs)
+    return bis_list
+
+
 
 
 # ---------------------- validation functions
