@@ -21,11 +21,13 @@ def run_application():
 
                 event_date, event_place = get_event_info_from_user()
                 soundcheck = get_soundcheck_from_user(songs)
+                intro = get_intro_from_user()
                 setlist, setlist_duration = generate_setlist(songs)
                 bis = generate_bis_list(songs)
                 generate_pdf_file(event_date,
                                   event_place,
                                   soundcheck,
+                                  intro,
                                   setlist,
                                   setlist_duration,
                                   bis)
@@ -92,6 +94,11 @@ def get_event_info_from_user():
     place = input("Event place: ")
 
     return date,place
+
+def get_intro_from_user():
+
+    intro = input("Intro: ")
+    return intro
 
 def create_setlist(user_setlist, dataset):
     setlist = []

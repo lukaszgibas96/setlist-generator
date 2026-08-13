@@ -6,25 +6,34 @@ import datetime as dt
 
 
 image_location = "assets/logo.png"
-#duration = 6500
-#date = "2026-07-22"
-#place = "GaragePub"
-#setlist = [{'number': '1', 'title': 'droga'}, 
-#           {'number': '2', 'title': 'bez slow'}, 
-#           {'number': '3', 'title': 'tesknota'}, 
-#           {'number': '4', 'title': 'popioly'}]
-#soundcheck = {'number': '5', 'title': 'chwila'}
-#bis = [ {'number': '6', 'title': 'cykl'}, 
-#        {'number': '7', 'title': 'sam'}]
-
+duration = 6500
+date = "2026-07-22"
+place = "Garage Pub"
+setlist = [{'number': '1', 'title': 'droga'}, 
+           {'number': '2', 'title': 'bez slow'}, 
+           {'number': '3', 'title': 'tesknota'}, 
+           {'number': '4', 'title': 'popioly'}]
+soundcheck = {'number': '5', 'title': 'chwila'}
+bis = [ {'number': '6', 'title': 'cykl'}, 
+        {'number': '7', 'title': 'sam'}]
+intro = "Ojciec Mateusz Reverse"
+main_font_size = 22
+title_font_size = 20
 def generate_pdf_file(date,
                       place,
                       soundcheck,
+                      intro,
                       setlist, 
                       setlist_duration,
                       bis):
     
     pdf = FPDF()
+# Add font to project
+    pdf.add_font(
+                family= "Tippa",
+                fname= "assets/Tippa.ttf"
+                )
+    pdf.set_char_spacing(-1)
 
     pdf.add_page()
 
@@ -36,37 +45,39 @@ def generate_pdf_file(date,
                 )
 
 # Add place
-    pdf.set_font("Times", style = "B", size = 25)
-    pdf.set_y(70)
+    pdf.set_font("Tippa", size = 35)
+    pdf.set_y(65)
     pdf.cell(
             text = f"{place}",
             align = "C",
             center = True,
             new_y= "NEXT"
             )
-    pdf.ln(10)
+    pdf.ln(7)
 # Add time
-    pdf.set_font("Times", style = "B", size = 25)
+    pdf.set_font("Tippa", size = 20)
     pdf.cell(
             text = f"{convert_date_to_display_format(date)}r",
             align = "C",
             center = True,
             new_y= "NEXT"
             )
-    pdf.ln(15)
+    pdf.ln(10)
 # Add soundcheck
     pdf.line(5,pdf.get_y(),200,pdf.get_y())
     pdf.ln(5)
-    pdf.set_font("Times", style = "B", size = 20)
+    pdf.set_font("Tippa", size = title_font_size)
+    soundcheck_text = "soundcheck:"
+    text_width = pdf.get_string_width(soundcheck_text)
     pdf.cell(
-            w=0,
-            text= f"soundcheck: ",
+            w=text_width,
+            text= soundcheck_text,
             align= "L",
             )
-    pdf.set_x(60)
+    pdf.set_x(pdf.get_x() + 10)
     pdf.cell(
-            w=0,
-            text= f"{soundcheck["number"]}  -  {soundcheck["title"]} ",
+            
+            text= f"{soundcheck["number"]} - {soundcheck["title"]} ",
             align= "L",
             new_y= "NEXT"
             )
@@ -74,10 +85,19 @@ def generate_pdf_file(date,
 # Add setlit
     pdf.line(5,pdf.get_y(),200,pdf.get_y())
     pdf.ln(5)
-    pdf.set_font("Times", style = "B", size = 20)
+    pdf.set_font("Tippa", size = title_font_size)
     pdf.cell(w=0, text= "setlist: ", align= "L",new_y= "NEXT" )
+    pdf.ln(10)
+    pdf.set_font("Tippa", size = title_font_size)
+    pdf.set_x(38)
+    pdf.cell(
+            w= 0,
+            text = f"intro: {intro}",
+            align= "L",
+            new_y= "NEXT"
+            )
     pdf.ln(5)
-    pdf.set_font("Times", style = "B", size = 20)
+    pdf.set_font("Tippa", size = main_font_size)
     for row in setlist:
         pdf.set_x(60)
         pdf.cell(text = f"{row["number"]}  -  {row["title"]}",
@@ -90,10 +110,11 @@ def generate_pdf_file(date,
     pdf.line(x1= 5, y1= pdf.get_y(), x2= 200, y2= pdf.get_y())
 
 # Add bis
-    pdf.set_font("Times", style = "B", size = 20)
+    pdf.set_font("Tippa", size = title_font_size)
     pdf.ln(5)
     pdf.cell(w=0, text= "bis: ", align= "L", new_y= "NEXT")
     pdf.ln(5)
+    pdf.set_font("Tippa", size = main_font_size)
     for row in bis:
         pdf.set_x(60)
         pdf.cell(text = f"{row["number"]}  -  {row["title"]}",
@@ -134,8 +155,11 @@ def convert_sec_to_time(sec_time):
 
     return minutes, seconds
 
+def convert_number_to_roman(number):
+    ...
+
 # =======================
 
 #Only for test
-#generate_pdf_file(setlist,duration,date,place,soundcheck,bis)
+generate_pdf_file(date, place, soundcheck,intro,setlist,duration,bis)
 
