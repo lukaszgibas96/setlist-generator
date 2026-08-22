@@ -6,17 +6,7 @@ import datetime as dt
 
 
 image_location = "assets/logo.png"
-duration = 6500
-date = "2026-07-22"
-place = "Garage Pub"
-setlist = [{'number': '1', 'title': 'droga'}, 
-           {'number': '2', 'title': 'bez slow'}, 
-           {'number': '3', 'title': 'tesknota'}, 
-           {'number': '4', 'title': 'popioly'}]
-soundcheck = {'number': '5', 'title': 'chwila'}
-bis = [ {'number': '6', 'title': 'cykl'}, 
-        {'number': '7', 'title': 'sam'}]
-intro = "Ojciec Mateusz Reverse"
+
 main_font_size = 22
 title_font_size = 20
 def generate_pdf_file(date,
@@ -77,7 +67,7 @@ def generate_pdf_file(date,
     pdf.set_x(pdf.get_x() + 10)
     pdf.cell(
             
-            text= f"{soundcheck["number"]} - {soundcheck["title"]} ",
+            text= f"{convert_number_to_roman(soundcheck["number"])} - {soundcheck["title"]} ",
             align= "L",
             new_y= "NEXT"
             )
@@ -92,7 +82,7 @@ def generate_pdf_file(date,
     pdf.set_x(38)
     pdf.cell(
             w= 0,
-            text = f"intro: {intro}",
+            text = f"intro: ({intro})",
             align= "L",
             new_y= "NEXT"
             )
@@ -100,7 +90,12 @@ def generate_pdf_file(date,
     pdf.set_font("Tippa", size = main_font_size)
     for row in setlist:
         pdf.set_x(60)
-        pdf.cell(text = f"{row["number"]}  -  {row["title"]}",
+        pdf.cell(text = convert_number_to_roman(row["number"]),
+                w = 0,
+                align = "L",
+                )
+        pdf.set_x(85)
+        pdf.cell(text = f"-  {row["title"]}",
                 w = 0,
                 align = "L",
                 new_y= "NEXT"
@@ -117,7 +112,12 @@ def generate_pdf_file(date,
     pdf.set_font("Tippa", size = main_font_size)
     for row in bis:
         pdf.set_x(60)
-        pdf.cell(text = f"{row["number"]}  -  {row["title"]}",
+        pdf.cell(text = convert_number_to_roman(row["number"]),
+                w = 0,
+                align = "L"
+                )
+        pdf.set_x(85)
+        pdf.cell(text = f"-  {row["title"]}",
                 w = 0,
                 align = "L",
                 new_y= "NEXT"
@@ -126,7 +126,7 @@ def generate_pdf_file(date,
 
 # Save pdf file
     pdf.output(
-        f"{date}_souldrone_{place}_setlist_{convert_setlist_duration_to_rounded_minutes(setlist_duration)}min.pdf"
+        f"output/{date}_souldrone_{place}_setlist_{convert_setlist_duration_to_rounded_minutes(setlist_duration)}min.pdf"
                 )
 
 
@@ -155,11 +155,41 @@ def convert_sec_to_time(sec_time):
 
     return minutes, seconds
 
+roman_number = [ 
+        {"n": 1, "rn": "I"},
+        {"n": 2, "rn": "II"},
+        {"n": 3, "rn": "III"},
+        {"n": 4, "rn": "IV"},
+        {"n": 5, "rn": "V"},
+        {"n": 6, "rn": "VI"},
+        {"n": 7, "rn": "VII"},
+        {"n": 8, "rn": "VIII"},
+        {"n": 9, "rn": "IX"},
+        {"n": 10, "rn": "X"}
+            ]
+
 def convert_number_to_roman(number):
-    ...
+    
+    if 0 < int(number) < 40:
+        if 0 < int(number) <= 10:
+            convert_number = find_number_of_unit(number)
+            return convert_number
+
+        else:
+            tens = int(number[0])
+            ones = int(number[1])
+
+            convert_number = tens * "X" + find_number_of_unit(ones)
+            return convert_number
+
+
+def find_number_of_unit(number):
+    if int(number) == 0:
+        return ""
+    
+    for row in roman_number:
+        if row["n"] == int(number):
+            return row["rn"]
 
 # =======================
-
-#Only for test
-generate_pdf_file(date, place, soundcheck,intro,setlist,duration,bis)
 

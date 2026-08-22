@@ -1,13 +1,10 @@
 import csv
-import sys
 from pdf_generator import generate_pdf_file
 
 def main():
 
     run_application()
     
-
-
 # ---------------------- function definitions
 
 def run_application():
