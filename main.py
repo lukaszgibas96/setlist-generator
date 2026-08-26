@@ -1,5 +1,6 @@
 import csv
 from pdf_generator import generate_pdf_file
+import datetime as dt
 
 def main():
 
@@ -70,7 +71,16 @@ def load_songs_from_csv():
     return songs
 
 def get_menu_choice():
-     return int(input("Choose action: "))
+
+    while True:
+        try:
+            x = int(input("Choose action: "))
+            if 0 <= x <=4:
+                return x 
+            else:
+                print("Please choose an option from 0 to 4")
+        except ValueError:
+            print("Invalid input. Please enter a number from 0 to 4")
 
 def get_setlist_from_user(songs):
 
@@ -87,10 +97,22 @@ def get_setlist_from_user(songs):
 
 def get_event_info_from_user():
 
-    date = input("Event date (YYYY-MM-DD): ")
-    place = input("Event place: ")
+    while True:
 
-    return date,place
+        date = input("Event date (YYYY-MM-DD): ")
+
+        try:
+            date_object = dt.datetime.strptime(date, "%Y-%m-%d").date()
+            today_date = dt.date.today()
+        
+            if today_date > date_object: 
+                print("Invalid date. Date cannot be from past")
+                continue   
+            place = input("Event place: ")        
+            return date,place
+
+        except ValueError:
+            print("Invalid date format. Please use YYYY-MM-DD.")
 
 def get_intro_from_user():
 
@@ -230,11 +252,17 @@ def get_soundcheck_from_user(songs):
 
     soundcheck = {}
     show_database(songs)
-    soundcheck_song = input("Choose soundcheck song: ")
-    for row in songs:
-        if soundcheck_song == row["number"]:
-            soundcheck = {"number": row["number"], "title": row["title"]}
-    return soundcheck
+    while True:
+        
+        soundcheck_song = input("Choose soundcheck song: ")
+        if song_number_exists(soundcheck_song,songs):
+            for row in songs:
+                if soundcheck_song == row["number"]:
+                    soundcheck = {"number": row["number"], "title": row["title"]}
+                return soundcheck
+            else:
+                print("Song does not exist in database")
+                continue
 
 def get_bis_list_from_user(songs):
 
