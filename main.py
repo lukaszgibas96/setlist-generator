@@ -87,14 +87,33 @@ def get_setlist_from_user(songs):
     show_database(songs)
 
     setlist = []
-    x = int(input("Choose first song: "))
-
-    while x != 0:
-        setlist.append(x)
-        x = int(input("Choose next song: "))
-
-    return setlist
-
+    while True:
+        try:
+            x = input("Choose first song: ")
+            if song_number_exists(x, songs):
+                setlist.append(int(x))
+                break 
+            elif int(x) == 0:
+                return
+            else:
+                print("Song does not exist in database. Choose other number")
+        except ValueError:
+            print("Invalid song number.Please, use the correct number")
+          
+    
+    while True:
+        try:
+            x = input("Choose next song: ")
+            if song_number_exists(x,songs):
+                setlist.append(int(x))
+            elif int(x) == 0:
+                return setlist
+            else:
+                print("Song does not exist in database. Choose other number")
+                        
+        except ValueError:
+                print("Invalid song number.Please, use the correct number")
+               
 def get_event_info_from_user():
 
     while True:
@@ -135,9 +154,6 @@ def generate_setlist(songs):
     num_setlist = get_setlist_from_user(songs)
         
     setlist , setlist_duration = create_setlist(num_setlist, songs)
-            
-    print(f"Final setlist:\n {setlist}")
-    print(f"Duration: {setlist_duration}")
     return setlist, setlist_duration
 
 def convert_time_to_sec(str_time):
@@ -162,18 +178,34 @@ def add_song_to_database(songs):
 
     while True:
 
-        new_number = input("New song's number: ")
+        while True:
+
+            new_number = input("New song's number: ")
+            if check_song_number_format(new_number):
+                break
+            else:
+                print("Invalid song number format. Please, use natural number e.x 1,2,3... etc")
 
         if song_number_exists(new_number, songs):
             print("This song number already exists in database.")
 
         else:
-            new_title = input("New song's title: ")
-            new_duration = input("Duration of new song: ")
-            songs.append({"number": new_number, "title": new_title, "duration": new_duration})
-
-            save_songs_to_CSV(songs)
-
+            
+            while True:
+                new_title = input("New song's title: ").lower()
+                if check_polish_character(new_title):
+                    print("Please, use title w/o polish characters")
+                else:
+                    break
+            while True:    
+                new_duration = input("Duration of new song: ")
+                if check_duration_format(new_duration):
+                    songs.append({"number": new_number, "title": new_title, "duration": new_duration})
+                    save_songs_to_CSV(songs)
+                    break
+                else:
+                    print("Invalid duration value. Please use min:sec format.")
+                
         if not ask_to_continue_add():
             break
 
@@ -187,18 +219,16 @@ def song_number_exists(number,database):
 def ask_to_continue_add():
     next_step = input("Do you want add another song? < YES / NO >")
     
-    if next_step == "YES":
+    if check_yes_no_input(next_step):
         return True
-    else:
-        return False
+    return False
 
 def ask_to_continue_edit():
     next_step = input("Do you want edit another song? < YES / NO >")
     
-    if next_step == "YES":
+    if check_yes_no_input(next_step):
         return True
-    else:
-        return False
+    return False
 
 def save_songs_to_CSV(songs):
     
@@ -259,23 +289,40 @@ def get_soundcheck_from_user(songs):
             for row in songs:
                 if soundcheck_song == row["number"]:
                     soundcheck = {"number": row["number"], "title": row["title"]}
-                return soundcheck
-            else:
-                print("Song does not exist in database")
-                continue
+                    return soundcheck
+        else:
+            print("Song does not exist in database")
+            continue
 
 def get_bis_list_from_user(songs):
 
     show_database(songs)
 
     bis = []
-    x = int(input("Choose first bis: "))
+    while True:
+        try:
+            x = input("Choose first bis: ")
+            if song_number_exists(x,songs):
+                bis.append(int(x))
+                break
+            elif int(x) == 0:
+                return
+            else:
+                print("Song does not exist in database. Choose other number")
+        except ValueError:
+            print("Invalid song number.Please, use the correct number")
 
-    while x != 0:
-        bis.append(x)
-        x = int(input("Choose next bis: "))
-
-    return bis
+    while True:
+        try:
+            x = input("Choose next bis: ")
+            if song_number_exists(x,songs):
+                bis.append(int(x))
+            elif int(x) == 0:
+                return bis
+            else:
+                print("Song does not exist in database. Choose other number")
+        except ValueError:
+            print("Invalid song number.Please, use the correct number")
 
 def generate_bis_list(songs):
     bis_numbers = get_bis_list_from_user(songs) 
@@ -287,8 +334,37 @@ def generate_bis_list(songs):
 
 # ---------------------- validation functions
 
+def check_yes_no_input(input_str):
+    accepted_input = ["yes", "no", "y", "n"]
+    if input_str.strip().lower() in accepted_input:
+        return True
+    return False
 
+def check_polish_character(word):
+    polish_character = "ąćęłńóśźżĄĆĘŁŃÓŚŹŻ"
 
+    for char in word:
+        if char in polish_character:
+            return True
+    return False
+
+def check_duration_format(duration):
+
+    try:
+        minutes,seconds = duration.strip().split(":")
+        if int(minutes) >= 0 and not minutes.startswith("0"):
+            if 0 < int(seconds) < 60:
+                return True
+            return False
+        return False
+    except ValueError:
+        return False
+
+def check_song_number_format(number):
+    if int(number) >= 0:
+        return True
+    else:
+        return False
 # ----------------------
 
 if __name__ == "__main__":
