@@ -187,7 +187,10 @@ def add_song_to_database(songs):
 
             new_number = input("New song's number: ")
             if check_song_number_format(new_number):
-                break
+                if new_number != "0":
+                    break
+                else:
+                    print("Invalid song number. Please, don not use 0 as a song number")
             else:
                 print("Invalid song number format. Please, use natural number e.x 1,2,3... etc")
 
@@ -392,7 +395,9 @@ def check_duration_format(duration):
 
     try:
         minutes,seconds = duration.strip().split(":")
-        if int(minutes) >= 0 and not minutes.startswith("0"):
+        if int(minutes) >= 0:
+            if len(minutes) > 1 and minutes.startswith("0"):
+                return False
             if 0 <= int(seconds) < 60:
                 return True
             return False
@@ -402,7 +407,7 @@ def check_duration_format(duration):
 
 def check_song_number_format(number):
     try:
-        if int(number) >= 0:
+        if 40 > int(number) >= 0:
             return True
         else:
             return False

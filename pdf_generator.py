@@ -2,6 +2,7 @@ from fpdf import FPDF
 from fpdf.enums import Align
 from PIL import Image
 import datetime as dt
+import sys
 
 
 
@@ -181,7 +182,6 @@ def convert_number_to_roman(number):
 
             convert_number = tens * "X" + find_number_of_unit(ones)
             return convert_number
-
 
 def find_number_of_unit(number):
     if int(number) == 0:
