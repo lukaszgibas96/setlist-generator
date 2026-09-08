@@ -20,8 +20,8 @@ def run_application():
                 event_date, event_place = get_event_info_from_user()
                 soundcheck = get_soundcheck_from_user(songs)
                 intro = get_intro_from_user()
-                setlist, setlist_duration = generate_setlist(songs)
-                bis = generate_bis_list(songs)
+                setlist, setlist_duration = get_song_list_from_user(songs,section = "song")
+                bis,_ = get_song_list_from_user(songs, section = "bis")
                 generate_pdf_file(event_date,
                                   event_place,
                                   soundcheck,
@@ -82,43 +82,36 @@ def get_menu_choice():
         except ValueError:
             print("Invalid input. Please enter a number from 0 to 4")
 
-def get_setlist_from_user(songs):
+def get_song_list_from_user(songs,section):
 
     show_database(songs)
 
-    setlist = []
+    song_list = []
     while True:
         try:
-            x = input("Choose first song: ")
-            if check_song_number_format(x):
-                if song_number_exists(x, songs):
-                    setlist.append(int(x))
-                    break 
-                elif int(x) == 0:
-                    return setlist
-                else:
-                    print("Song does not exist in database. Choose other number")
+
+            current_song_list , current_duration = create_song_list(song_list, songs)
+            show_current_song_list_detail(current_song_list,current_duration,section)
+            x = input(f"Choose {section} < 0-END / B-BACK > : ")
+            if x.strip().lower() == "b":
+                song_list.pop()
+                print("Removed")
             else:
-                print("Invalid song number format. Please, use natural number e.x 1,2,3... etc")
+                if check_song_number_format(x):
+                    if song_number_exists(x, songs):
+                        song_list.append(int(x))
+                    elif int(x) == 0:
+                        final_song_list , final_duration = create_song_list(song_list, songs)
+                        return final_song_list, final_duration
+                    else:
+                        print("Song does not exist in database. Choose other number")
+                else:
+                    print("Invalid song number format. Please, use natural number e.x 1,2,3... etc")
         except ValueError:
             print("Invalid song number.Please, use the correct number")
-          
-    
-    while True:
-        try:
-            x = input("Choose next song: ")
-            if check_song_number_format(x):
-                if song_number_exists(x,songs):
-                    setlist.append(int(x))
-                elif int(x) == 0:
-                    return setlist
-                else:
-                    print("Song does not exist in database. Choose other number")
-            else:
-                print("Invalid song number format. Please, use natural number e.x 1,2,3... etc")           
-        except ValueError:
-                print("Invalid song number.Please, use the correct number")
-               
+        except IndexError:
+            print("Empty list. Back command unavailable.")
+                         
 def get_event_info_from_user():
 
     while True:
@@ -143,7 +136,7 @@ def get_intro_from_user():
     intro = input("Intro: ")
     return intro
 
-def create_setlist(user_setlist, dataset):
+def create_song_list(user_setlist, dataset):
     setlist = []
     setlist_duration = 0
      
@@ -155,16 +148,16 @@ def create_setlist(user_setlist, dataset):
                 setlist_duration += int(convert_time_to_sec(row["duration"]))
     return setlist, setlist_duration
 
-def generate_setlist(songs):
-    num_setlist = get_setlist_from_user(songs)
-        
-    setlist , setlist_duration = create_setlist(num_setlist, songs)
-    return setlist, setlist_duration
-
 def convert_time_to_sec(str_time):
      minutes, seconds = str_time.split(":")
      total = int(minutes) * 60 + int(seconds)
      return total
+
+def convert_sec_to_time(sec_time):
+    minutes = sec_time // 60
+    seconds = sec_time % 60
+
+    return minutes, seconds
 
 def say_goodbye():
     print("""
@@ -331,48 +324,16 @@ def get_soundcheck_from_user(songs):
         else:
             print("Invalid song number format. Please, use natural number e.x 1,2,3... etc")
 
-def get_bis_list_from_user(songs):
+def show_current_song_list_detail(song_list,duration,section):
+    print(f"===== CURRENT {section.upper()} LIST =====")
+    for row in song_list:
+        print(f'{row["number"]}. {row["title"]}')
 
-    show_database(songs)
-
-    bis = []
-    while True:
-        try:
-            x = input("Choose first bis: ")
-            if check_song_number_format(x):
-                if song_number_exists(x,songs):
-                    bis.append(int(x))
-                    break
-                elif int(x) == 0:
-                    return bis
-                else:
-                    print("Song does not exist in database. Choose other number")
-            else:
-                print("Invalid song number format. Please, use natural number e.x 1,2,3... etc")
-        except ValueError:
-            print("Invalid song number.Please, use the correct number")
-
-    while True:
-        try:
-            x = input("Choose next bis: ")
-            if check_song_number_format(x):
-                if song_number_exists(x,songs):
-                    bis.append(int(x))
-                elif int(x) == 0:
-                    return bis
-                else:
-                    print("Song does not exist in database. Choose other number")
-            else:
-                print("Invalid song number format. Please, use natural number e.x 1,2,3... etc")
-        except ValueError:
-            print("Invalid song number.Please, use the correct number")
-
-def generate_bis_list(songs):
-    bis_numbers = get_bis_list_from_user(songs) 
-    bis_list , bis_list_duration = create_setlist(bis_numbers, songs)
-    return bis_list
-
-
+    minutes, seconds = convert_sec_to_time(duration)
+    print("============================")
+    print(f"Current {section.upper()} Duration: {minutes}min {seconds}sec")
+    print("============================")
+    
 
 
 # ---------------------- validation functions
