@@ -22,8 +22,10 @@ def run_application():
                 event_place = get_event_place_from_user()
                 soundcheck = get_soundcheck_from_user(songs)
                 intro = get_intro_from_user()
-                setlist, setlist_duration = get_song_list_from_user(songs,section = "song")
-                bis,_ = get_song_list_from_user(songs, section = "bis")
+                setlist, setlist_duration, status = get_song_list_from_user(songs,section = "song")
+                if status == "end":
+                    continue
+                bis,_,status = get_song_list_from_user(songs, section = "bis")
                 generate_pdf_file(event_date,
                                   event_place,
                                   soundcheck,
@@ -97,17 +99,21 @@ def get_song_list_from_user(songs,section):
 
             current_song_list , current_duration = create_song_list(song_list, songs)
             show_current_song_list_detail(current_song_list,current_duration,section)
-            x = input(f"Choose {section} < 0-END / B-BACK > : ")
+            x = input(f"Choose {section} < B-BACK / 0-CANCEL / N-NEXT > : ")
             if x.strip().lower() == "b":
                 song_list.pop()
                 print("Removed")
+            elif x.strip().lower() == "0":
+                status = "end"
+                return current_song_list , current_duration, status
+            elif x.strip().lower() == "n":
+                status = ""
+                final_song_list , final_duration = create_song_list(song_list, songs)
+                return final_song_list, final_duration, status
             else:
                 if check_song_number_format(x):
                     if song_number_exists(x, songs):
-                        song_list.append(int(x))
-                    elif int(x) == 0:
-                        final_song_list , final_duration = create_song_list(song_list, songs)
-                        return final_song_list, final_duration
+                        song_list.append(int(x))   
                     else:
                         print("Song does not exist in database. Choose other number")
                 else:
@@ -143,7 +149,7 @@ def get_event_place_from_user():
             place = input("Event place: ").strip()  
             
             if not check_place_format(place):
-                print('Invalid place format. Place can not include /\:*?"<>|\ characters')
+                print(r'Invalid place format. Place can not include /\:*?"<>| characters')
                 continue
             place_length = len(place)
             maximum_length = 200
@@ -397,7 +403,7 @@ def check_song_number_format(number):
         return False
 
 def check_place_format(place):
-    forbiden_character = '/\:*?"<>|'
+    forbiden_character = r'/\:*?"<>|'
     
     for char in place:
         if char in forbiden_character:
