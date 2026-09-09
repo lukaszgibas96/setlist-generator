@@ -1,6 +1,7 @@
 import csv
 from pdf_generator import generate_pdf_file
 import datetime as dt
+import sys
 
 def main():
 
@@ -17,7 +18,8 @@ def run_application():
             menu_choice = get_menu_choice()
             if menu_choice == 1:
 
-                event_date, event_place = get_event_info_from_user()
+                event_date = get_event_date_from_user()
+                event_place = get_event_place_from_user()
                 soundcheck = get_soundcheck_from_user(songs)
                 intro = get_intro_from_user()
                 setlist, setlist_duration = get_song_list_from_user(songs,section = "song")
@@ -62,13 +64,16 @@ def show_menu():
 
 def load_songs_from_csv():
 
-    songs = []
-    
-    with open("songs.csv") as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                songs.append({"number": row["number"], "title": row["title"], "duration": row["duration"]})
-    return songs
+    try:
+        songs = []
+        
+        with open("songs.csv") as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    songs.append({"number": row["number"], "title": row["title"], "duration": row["duration"]})
+        return songs
+    except FileNotFoundError:
+        sys.exit("songs.csv not found.")
 
 def get_menu_choice():
 
@@ -112,7 +117,7 @@ def get_song_list_from_user(songs,section):
         except IndexError:
             print("Empty list. Back command unavailable.")
                          
-def get_event_info_from_user():
+def get_event_date_from_user():
 
     while True:
 
@@ -124,13 +129,29 @@ def get_event_info_from_user():
         
             if today_date > date_object: 
                 print("Invalid date. Date cannot be from past")
-                continue   
-            place = input("Event place: ")        
-            return date,place
+                continue
+                   
+            return date
 
         except ValueError:
             print("Invalid date format. Please use YYYY-MM-DD.")
 
+def get_event_place_from_user():
+
+    while True:
+    
+            place = input("Event place: ").strip()  
+            
+            if not check_place_format(place):
+                print('Invalid place format. Place can not include /\:*?"<>|\ characters')
+                continue
+            place_length = len(place)
+            maximum_length = 200
+            if place_length > maximum_length:
+                print(f"Place name is too long. Maximum amount cannot exceed {maximum_length} characters.")
+                continue          
+            return place
+    
 def get_intro_from_user():
 
     intro = input("Intro: ")
@@ -374,6 +395,15 @@ def check_song_number_format(number):
             return False
     except ValueError:
         return False
+
+def check_place_format(place):
+    forbiden_character = '/\:*?"<>|'
+    
+    for char in place:
+        if char in forbiden_character:
+            return False
+    return True
+
 # ----------------------
 
 if __name__ == "__main__":
