@@ -5,8 +5,9 @@ import datetime as dt
 import sys
 
 
-
 image_location = "assets/logo.png"
+
+
 
 main_font_size = 22
 title_font_size = 20
@@ -20,23 +21,30 @@ def generate_pdf_file(date,
     
     pdf = FPDF()
 # Add font to project
-    pdf.add_font(
-                family= "Tippa",
-                fname= "assets/Tippa.ttf"
-                )
+    font_name = "Tippa"
+    try:
+        pdf.add_font(
+                    family= font_name,
+                    fname= "assets/Tippa.ttf"
+                    )
+    except FileNotFoundError:
+        font_name = "Times"
+                    
     pdf.set_char_spacing(-1)
 
     pdf.add_page()
 
 # Add and position logo
-    pdf.image(  name= image_location,
-                x = Align.C,
-                y = 5,
-                w = 200
-                )
-
+    try:
+        pdf.image(  name= image_location,
+                    x = Align.C,
+                    y = 5,
+                    w = 200
+                    )
+    except FileNotFoundError:
+        sys.exit(f"Logo not found.Please, add the logo.png to assets folder.")
 # Add place
-    pdf.set_font("Tippa", size = 35)
+    pdf.set_font(font_name, size = 35)
     pdf.set_y(65)
     pdf.cell(
             text = f"{place}",
@@ -46,7 +54,7 @@ def generate_pdf_file(date,
             )
     pdf.ln(7)
 # Add time
-    pdf.set_font("Tippa", size = 20)
+    pdf.set_font(font_name, size = 20)
     pdf.cell(
             text = f"{convert_date_to_display_format(date)}r",
             align = "C",
@@ -57,7 +65,7 @@ def generate_pdf_file(date,
 # Add soundcheck
     pdf.line(5,pdf.get_y(),200,pdf.get_y())
     pdf.ln(5)
-    pdf.set_font("Tippa", size = title_font_size)
+    pdf.set_font(font_name, size = title_font_size)
     soundcheck_text = "soundcheck:"
     text_width = pdf.get_string_width(soundcheck_text)
     pdf.cell(
@@ -76,10 +84,10 @@ def generate_pdf_file(date,
 # Add setlit
     pdf.line(5,pdf.get_y(),200,pdf.get_y())
     pdf.ln(5)
-    pdf.set_font("Tippa", size = title_font_size)
+    pdf.set_font(font_name, size = title_font_size)
     pdf.cell(w=0, text= "setlist: ", align= "L",new_y= "NEXT" )
     pdf.ln(10)
-    pdf.set_font("Tippa", size = title_font_size)
+    pdf.set_font(font_name, size = title_font_size)
     pdf.set_x(38)
     pdf.cell(
             w= 0,
@@ -88,7 +96,7 @@ def generate_pdf_file(date,
             new_y= "NEXT"
             )
     pdf.ln(5)
-    pdf.set_font("Tippa", size = main_font_size)
+    pdf.set_font(font_name, size = main_font_size)
     for row in setlist:
         pdf.set_x(60)
         pdf.cell(text = convert_number_to_roman(row["number"]),
@@ -106,11 +114,11 @@ def generate_pdf_file(date,
     pdf.line(x1= 5, y1= pdf.get_y(), x2= 200, y2= pdf.get_y())
 
 # Add bis
-    pdf.set_font("Tippa", size = title_font_size)
+    pdf.set_font(font_name, size = title_font_size)
     pdf.ln(5)
     pdf.cell(w=0, text= "bis: ", align= "L", new_y= "NEXT")
     pdf.ln(5)
-    pdf.set_font("Tippa", size = main_font_size)
+    pdf.set_font(font_name, size = main_font_size)
     for row in bis:
         pdf.set_x(60)
         pdf.cell(text = convert_number_to_roman(row["number"]),
@@ -127,7 +135,7 @@ def generate_pdf_file(date,
 
 # Save pdf file
     pdf.output(
-        f"output/{date}_souldrone_{place}_setlist_{convert_setlist_duration_to_rounded_minutes(setlist_duration)}min.pdf"
+        f"output/{date}_souldrone_{sanitize_place_name(place)}_setlist_{convert_setlist_duration_to_rounded_minutes(setlist_duration)}min.pdf"
                 )
 
 
@@ -191,5 +199,8 @@ def find_number_of_unit(number):
         if row["n"] == int(number):
             return row["rn"]
 
+def sanitize_place_name(place):
+    place = place.replace(" ", "_")
+    return place
 # =======================
 
