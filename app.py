@@ -1,4 +1,4 @@
-from flask import Flask , render_template
+from flask import Flask , render_template , request
 from flask import jsonify
 from main import load_songs_from_csv
 
@@ -16,6 +16,15 @@ def load_songs():
     #      database = database + song_line
     # database = database + "<p>============================</p>"
     return render_template("songs.html",songs = songs)
+
+@app.route("/greet", methods= ["GET", "POST"])
+
+def post():
+    if request.method == "POST":
+        username = request.form["username"] 
+        return f"Hello, {username}"
+    else:
+        return render_template("greet.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
