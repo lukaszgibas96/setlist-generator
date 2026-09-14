@@ -1,0 +1,6 @@
+<h1> Setlist Generator - Songs</h1>
+<ul>
+    {%for row in songs %}
+    <li>{{row["number"]}}. {{row["title"]}} - {{row["duration"]}}</li>
+    {%endfor%}
+</ul>
