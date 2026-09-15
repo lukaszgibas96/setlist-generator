@@ -1,6 +1,7 @@
 from flask import Flask , render_template , request
 from flask import jsonify
-from main import load_songs_from_csv
+from main import load_songs_from_csv, save_songs_to_CSV
+
 
 app = Flask(__name__)
 
@@ -8,13 +9,6 @@ app = Flask(__name__)
 
 def load_songs():
     songs = load_songs_from_csv()
-
-    # database = "<p> ===== CURRENT DATABASE ===== </p>"
-
-    # for row in songs:
-    #      song_line = f'<ul>{row["number"]}. {row["title"]} - {row["duration"]}</ul>'
-    #      database = database + song_line
-    # database = database + "<p>============================</p>"
     return render_template("songs.html",songs = songs)
 
 @app.route("/greet", methods= ["GET", "POST"])
@@ -25,6 +19,27 @@ def post():
         return f"Hello, {username}"
     else:
         return render_template("greet.html")
+
+@app.route("/add_song", methods= ["GET", "POST"])
+
+def add_song():
+    if request.method == "POST":
+        songs = load_songs_from_csv()
+        new_number = request.form["number"]
+        new_title = request.form["title"]
+        new_duration = request.form["duration"]
+
+        songs.append({"number": new_number, "title": new_title, "duration": new_duration})
+        save_songs_to_CSV(songs)
+
+        return "New song save to database"
+    else:
+        return render_template("add_song.html")
+
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
