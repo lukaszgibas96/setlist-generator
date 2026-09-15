@@ -1,9 +1,15 @@
 <h1> Add song to database</h1>
 
+    {% if error %} 
+        <p style="color:red">{{error}}</p>
+    {%endif%}
+
     <form method="POST" action="/add_song">
-        <label>Song number<input type="text" name= "number"> </label>
-        <label>Song title<input type= "text" name= "title"></label>
-        <label>Song duration<input type= "text" name= "duration"></label>
+        <label>Song number<input type="text" name= "number" value= {{number}}> </label>
+        <label>Song title<input type= "text" name= "title" value= {{title}}></label>
+        <label>Song duration<input type= "text" name= "duration" value={{duration}}></label>
         <button type= "submit">Wyslij</button>
 
     </form>
+
+    

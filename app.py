@@ -1,6 +1,6 @@
 from flask import Flask , render_template , request
 from flask import jsonify
-from main import load_songs_from_csv, save_songs_to_CSV
+from main import load_songs_from_csv, save_songs_to_CSV, check_song_number_format, check_polish_character, check_duration_format
 
 
 app = Flask(__name__)
@@ -29,12 +29,21 @@ def add_song():
         new_title = request.form["title"]
         new_duration = request.form["duration"]
 
-        songs.append({"number": new_number, "title": new_title, "duration": new_duration})
-        save_songs_to_CSV(songs)
-
-        return "New song save to database"
+        if check_song_number_format(new_number):
+            if not check_polish_character(new_title):
+                if check_duration_format(new_duration):
+                    songs.append({"number": new_number, "title": new_title, "duration": new_duration})
+                    save_songs_to_CSV(songs)
+                    return "New song save to database"
+                else:
+                    return render_template("add_song.html", error= "Invalid duration format", number= new_number, title= new_title)
+            else:
+                return render_template("add_song.html", error= "Please, use title w/o polish characters", number= new_number, duration= new_duration)
+        else:
+            return render_template("add_song.html", error= "Invalid song number format", title= new_title, duration= new_duration)
+        
     else:
-        return render_template("add_song.html")
+        return render_template("add_song.html", number= "", title= "", duration= "")
 
 
 
