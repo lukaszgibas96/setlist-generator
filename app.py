@@ -50,7 +50,10 @@ def add_song():
     else:
         return render_template("add_song.html", number= "", title= "", duration= "")
 
+@app.route("/home")
 
+def home():
+    return render_template("home.html")
 
 
 

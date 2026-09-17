@@ -1,0 +1,16 @@
+<h1> Setlist Generator - Songs</h1>
+
+{% for message in get_flashed_messages() %}
+    <p style="color:green">{{message}}</p>
+
+{% endfor %}
+
+<a href="/generate_setlist">Generate setlist</a>
+<a href="/songs">Show database</a>
+<a href="/add_song">Add song</a>
+<a href="/edit_song">Edit song</a>
+
+
+{% block content %}
+
+{% endblock %}

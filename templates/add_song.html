@@ -1,6 +1,8 @@
-<h1> Add song to database</h1>
+{% extends "base.html" %}
 
-<a href="/songs">Display database</a>
+{% block content %}
+
+<h1> Add song to database</h1>
 
     {% if error %} 
         <p style="color:red">{{error}}</p>
@@ -14,4 +16,5 @@
 
     </form>
 
+    {% endblock %}
     
