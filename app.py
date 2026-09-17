@@ -1,9 +1,10 @@
-from flask import Flask , render_template , request
+from flask import Flask , render_template , request, redirect, flash
 from flask import jsonify
-from main import load_songs_from_csv, save_songs_to_CSV, check_song_number_format, check_polish_character, check_duration_format
+from main import load_songs_from_csv, save_songs_to_CSV, check_song_number_format, check_polish_character, check_duration_format, song_number_exists
 
 
 app = Flask(__name__)
+app.secret_key = "temp"
 
 @app.route("/songs")
 
@@ -30,15 +31,19 @@ def add_song():
         new_duration = request.form["duration"]
 
         if check_song_number_format(new_number):
-            if not check_polish_character(new_title):
-                if check_duration_format(new_duration):
-                    songs.append({"number": new_number, "title": new_title, "duration": new_duration})
-                    save_songs_to_CSV(songs)
-                    return "New song save to database"
+            if not song_number_exists(new_number, songs):
+                if not check_polish_character(new_title):
+                    if check_duration_format(new_duration):
+                        songs.append({"number": new_number, "title": new_title, "duration": new_duration})
+                        save_songs_to_CSV(songs)
+                        flash("New song successfully added to database!")
+                        return redirect("/songs") 
+                    else:
+                        return render_template("add_song.html", error= "Invalid duration format", number= new_number, title= new_title)
                 else:
-                    return render_template("add_song.html", error= "Invalid duration format", number= new_number, title= new_title)
+                    return render_template("add_song.html", error= "Please, use title w/o polish characters", number= new_number, duration= new_duration)
             else:
-                return render_template("add_song.html", error= "Please, use title w/o polish characters", number= new_number, duration= new_duration)
+                return render_template("add_song.html", error= "Song currently exist in database", title= new_title, duration= new_duration)
         else:
             return render_template("add_song.html", error= "Invalid song number format", title= new_title, duration= new_duration)
         

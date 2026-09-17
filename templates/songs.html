@@ -1,4 +1,12 @@
 <h1> Setlist Generator - Songs</h1>
+{% for message in get_flashed_messages() %}
+    <p style="color:green">{{message}}</p>
+
+{% endfor %}
+
+
+<a href="/add_song">Add new song</a>
+
 <ul>
     {%for row in songs %}
     <li>{{row["number"]}}. {{row["title"]}} - {{row["duration"]}}</li>
