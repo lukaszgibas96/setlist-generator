@@ -1,6 +1,6 @@
 from flask import Flask , render_template , request, redirect, flash
 from flask import jsonify
-from main import load_songs_from_csv, save_songs_to_CSV, check_song_number_format, check_polish_character, check_duration_format, song_number_exists
+from main import load_songs_from_csv, save_songs_to_CSV, check_song_number_format, check_polish_character, check_duration_format, song_number_exists, overwrite_song_title_and_duration
 
 
 app = Flask(__name__)
@@ -12,14 +12,6 @@ def load_songs():
     songs = load_songs_from_csv()
     return render_template("songs.html",songs = songs)
 
-@app.route("/greet", methods= ["GET", "POST"])
-
-def post():
-    if request.method == "POST":
-        username = request.form["username"] 
-        return f"Hello, {username}"
-    else:
-        return render_template("greet.html")
 
 @app.route("/add_song", methods= ["GET", "POST"])
 
@@ -50,12 +42,38 @@ def add_song():
     else:
         return render_template("add_song.html", number= "", title= "", duration= "")
 
+@app.route("/edit_song/<number>", methods= ["POST", "GET"])
+
+def edit_song(number):
+
+    songs = load_songs_from_csv()
+    if request.method == "GET":
+        current_title, current_duration = find_song_by_number(number, songs)
+        return render_template("edit_song.html", number= number, title= current_title, duration= current_duration)
+
+    elif request.method == "POST":
+        new_title = request.form["title"]
+        new_duration = request.form["duration"]
+        overwrite_song_title_and_duration(number,new_title,new_duration,songs)
+        save_songs_to_CSV(songs)
+        flash(f"Song {number} successfully updated in database!")
+        return redirect("/songs")
+
 @app.route("/home")
 
 def home():
     return render_template("home.html")
 
+# ----------------- auxiliary functions -----------------
 
+def find_song_by_number(number,database):
+
+    for song in database:
+        if song["number"] == str(number):
+            current_title = song["title"]
+            current_duration = song["duration"]
+            return current_title, current_duration
+        
 
 
 if __name__ == "__main__":

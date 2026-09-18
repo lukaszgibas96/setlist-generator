@@ -5,7 +5,7 @@
 <h1> Songs list </h1>
 <ul>
     {%for row in songs %}
-    <li>{{row["number"]}}. {{row["title"]}} - {{row["duration"]}}</li>
+    <li>{{row["number"]}}. {{row["title"]}} - {{row["duration"]}} <a href="/edit_song/{{row['number']}}">Edit</a></li>
     {%endfor%}
 </ul>
 

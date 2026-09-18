@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if error %}
+    <p style="color:red">{{error}}</p>
+{% endif %}
+
+<form method="POST" action="/edit_song/{{number}}">
+    <label> Song number <input type="text" name= "number" value= {{number}} readonly ></label>
+    <label> Song title <input type="text" name= "title" value= {{title}}> </label>
+    <label> Song duration <input type="text" name="duration" value= {{duration}}> </label>
+
+    <button type= "submit"> Send </button>
+
+</form>
+
+{% endblock %}
