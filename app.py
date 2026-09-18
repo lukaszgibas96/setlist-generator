@@ -31,13 +31,13 @@ def add_song():
                         flash("New song successfully added to database!")
                         return redirect("/songs") 
                     else:
-                        return render_template("add_song.html", error= "Invalid duration format", number= new_number, title= new_title)
+                        return render_template("add_song.html", error= "Invalid duration format", number= new_number, title= new_title, duration= new_duration)
                 else:
-                    return render_template("add_song.html", error= "Please, use title w/o polish characters", number= new_number, duration= new_duration)
+                    return render_template("add_song.html", error= "Please, use title w/o polish characters", number= new_number, title= new_title, duration= new_duration)
             else:
-                return render_template("add_song.html", error= "Song currently exist in database", title= new_title, duration= new_duration)
+                return render_template("add_song.html", error= "Song currently exist in database", number= new_number, title= new_title, duration= new_duration)
         else:
-            return render_template("add_song.html", error= "Invalid song number format", title= new_title, duration= new_duration)
+            return render_template("add_song.html", error= "Invalid song number format", number= new_number, title= new_title, duration= new_duration)
         
     else:
         return render_template("add_song.html", number= "", title= "", duration= "")
@@ -54,11 +54,16 @@ def edit_song(number):
     elif request.method == "POST":
         new_title = request.form["title"]
         new_duration = request.form["duration"]
-        overwrite_song_title_and_duration(number,new_title,new_duration,songs)
-        save_songs_to_CSV(songs)
-        flash(f"Song {number} successfully updated in database!")
-        return redirect("/songs")
-
+        if not check_polish_character(new_title):
+            if check_duration_format(new_duration):
+                overwrite_song_title_and_duration(number,new_title,new_duration,songs)
+                save_songs_to_CSV(songs)
+                flash(f"Song {number} -  successfully updated in database!")
+                return redirect("/songs")
+            else:
+                return render_template("edit_song.html", error= "Invalid song duration format. Please, use mm:ss format.", number = number, title= new_title, duration= new_duration)
+        else:
+            return render_template("edit_song.html", error= "Please, use title w/o polish characters", number = number,title = new_title, duration= new_duration)
 @app.route("/home")
 
 def home():
