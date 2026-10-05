@@ -1,4 +1,4 @@
-from flask import Flask , render_template , request, redirect, flash
+from flask import Flask , render_template , request, redirect, flash, session
 from flask import jsonify
 from main import load_songs_from_csv, save_songs_to_CSV, check_song_number_format, check_polish_character, check_duration_format, song_number_exists, overwrite_song_title_and_duration
 
@@ -92,7 +92,23 @@ def confirm_remove_song(number):
         flash(f'Song "{number} - {song["title"]}" successfully REMOVED from database!')
         return redirect("/songs")
     
-        
+@app.route("/generate_setlist/get_event_details", methods =["GET", "POST"])  
+def get_event_details():
+    if request.method == "POST":
+        event_date = request.form["event_date"]
+        event_place = request.form["event_place"]
+        session["date"] = event_date
+        session["place"] = event_place
+        return redirect("/generate_setlist/songs")
+    elif request.method == "GET":
+        return render_template("get_event_details.html")  
+
+@app.route("/generate_setlist/songs", methods= ["GET", "POST"])
+def create_setlist():
+    if request.method == "POST":
+        ...
+    elif request.method == "GET":
+        return render_template("create_setlist.html")  
 
 # ----------------- auxiliary functions -----------------
 

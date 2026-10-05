@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1> Create setlist </h1>
+
+    {% if error %}
+        <p style="color:red"> {{error}} </p>
+    {%endif%}
+
+    {{session["date"]}} is concert in {{session["place"]}}
+
+
+{% endblock %}
