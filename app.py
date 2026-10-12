@@ -1,6 +1,6 @@
 from flask import Flask , render_template , request, redirect, flash, session
 from flask import jsonify
-from main import load_songs_from_csv, save_songs_to_CSV, check_song_number_format, check_polish_character, check_duration_format, song_number_exists, overwrite_song_title_and_duration
+from main import load_songs_from_csv, save_songs_to_CSV, check_song_number_format, check_polish_character, check_duration_format, song_number_exists, overwrite_song_title_and_duration, convert_time_to_sec, convert_sec_to_time
 
 
 app = Flask(__name__)
@@ -106,7 +106,23 @@ def get_event_details():
 @app.route("/generate_setlist/songs", methods= ["GET", "POST"])
 def create_setlist():
     if request.method == "POST":
-        ...
+        setlist = request.form.getlist("song")
+        action = request.form["action"]
+        soundcheck = request.form["soundcheck"]
+        intro = request.form["intro"]
+        songs = load_songs_from_csv()
+        if action == "calculate":
+            current_duration_sec = 0
+            for song in setlist:
+                if song_number_exists(song,songs):
+                    current_song = find_song_row_by_number(song,songs)
+                    current_duration_sec += convert_time_to_sec(current_song["duration"])
+            minutes, seconds = convert_sec_to_time(current_duration_sec)
+            current_duration = f"{minutes}min {seconds}sec"
+            return render_template("create_setlist.html",intro=intro, soundcheck=soundcheck, setlist=setlist, current_duration=current_duration)
+        elif action == "generate":
+            ...
+        return 
     elif request.method == "GET":
         return render_template("create_setlist.html")  
 

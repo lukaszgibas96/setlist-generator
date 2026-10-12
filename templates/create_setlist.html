@@ -8,7 +8,23 @@
         <p style="color:red"> {{error}} </p>
     {%endif%}
 
-    {{session["date"]}} is concert in {{session["place"]}}
+    <form method="POST" action="/generate_setlist/songs">
+        <label> Soundcheck <input type="text" name="soundcheck" value="{{soundcheck}}"></label>
+        <label> Intro <input type="text" name="intro" value="{{intro}}"></label>
+<h1> Setlist </h1>
+        <label> song 1 <input type="text" name="song" value="{{song1}}"></label>
+        <label> song 2 <input type="text" name="song" value="{{song2}}"></label>
+        <label> song 3 <input type="text" name="song" value="{{song3}}"></label>
+        <label> song 4 <input type="text" name="song" value="{{song4}}"></label>
+
+<h1> Bis (optional) </h1>
+        <label> bis 1 <input type="text" name="bis" value="{{bis1}}"></label>
+        <label> bis 2 <input type="text" name="bis" value="{{bis2}}"></label>
+
+        <button type="submit"> Calculate time </button>
+        <button type="submit"> Generate Setlist </button>
+
+    </form>
 
 
 {% endblock %}
