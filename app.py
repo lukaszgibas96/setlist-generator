@@ -1,7 +1,7 @@
 from flask import Flask , render_template , request, redirect, flash, session
 from flask import jsonify
 from main import load_songs_from_csv, save_songs_to_CSV, check_song_number_format, check_polish_character, check_duration_format, song_number_exists, overwrite_song_title_and_duration, convert_time_to_sec, convert_sec_to_time
-
+from pdf_generator import generate_pdf_file
 
 app = Flask(__name__)
 app.secret_key = "temp"
@@ -105,26 +105,53 @@ def get_event_details():
 
 @app.route("/generate_setlist/songs", methods= ["GET", "POST"])
 def create_setlist():
+    song_quantity = 5
     if request.method == "POST":
-        setlist = request.form.getlist("song")
-        action = request.form["action"]
-        soundcheck = request.form["soundcheck"]
+        songs = load_songs_from_csv() 
+        action = request.form["action"]   
         intro = request.form["intro"]
-        songs = load_songs_from_csv()
+        soundcheck = request.form["soundcheck"]
+        setlist = request.form.getlist("song")
+        bis = request.form.getlist("bis")
+        current_duration_sec = calculate_setlist_duration(setlist,songs)
         if action == "calculate":
-            current_duration_sec = 0
-            for song in setlist:
-                if song_number_exists(song,songs):
-                    current_song = find_song_row_by_number(song,songs)
-                    current_duration_sec += convert_time_to_sec(current_song["duration"])
             minutes, seconds = convert_sec_to_time(current_duration_sec)
             current_duration = f"{minutes}min {seconds}sec"
-            return render_template("create_setlist.html",intro=intro, soundcheck=soundcheck, setlist=setlist, current_duration=current_duration)
+            return render_template("create_setlist.html",intro=intro, soundcheck=soundcheck, setlist=setlist, bis=bis, current_duration=current_duration)
         elif action == "generate":
-            ...
-        return 
+            event_date = session["date"]
+            event_place = session["place"]
+            soundcheck = find_song_row_by_number(soundcheck,songs)
+            setlist = create_songlist(setlist,songs)
+            bis = create_songlist(request.form.getlist("bis"),songs)
+            
+            generate_pdf_file(  event_date,
+                                event_place,
+                                soundcheck,
+                                intro,
+                                setlist,
+                                current_duration_sec,
+                                bis)
+            flash("Setlist successfuly generated and saved!")
+        elif action == "add_row":
+            setlist.append("")
+            return render_template("create_setlist.html", intro=intro, soundcheck=soundcheck, setlist=setlist, bis=bis)
+        elif action == "remove_row":
+            setlist.pop()
+            return render_template("create_setlist.html", intro=intro, soundcheck=soundcheck, setlist=setlist, bis=bis)
+        elif action == "add_bis":
+            bis.append("")
+            return  render_template("create_setlist.html", intro=intro, soundcheck=soundcheck,setlist=setlist, bis=bis)
+        elif action == "remove_bis":
+            bis.pop()
+            return  render_template("create_setlist.html", intro=intro, soundcheck=soundcheck,setlist=setlist, bis=bis)
+        return redirect("/songs")
+
     elif request.method == "GET":
-        return render_template("create_setlist.html")  
+        setlist = []
+        for _ in range(song_quantity):
+            setlist.append("")
+        return render_template("create_setlist.html", setlist = setlist, bis = [""])  
 
 # ----------------- auxiliary functions -----------------
 
@@ -134,7 +161,20 @@ def find_song_row_by_number(number,database):
         if song["number"] == str(number):
             return song
         
+def calculate_setlist_duration(songlist,database):
+    current_duration_sec = 0
+    for song in songlist:
+        if song_number_exists(song,database):
+            current_song = find_song_row_by_number(song,database)
+            current_duration_sec += convert_time_to_sec(current_song["duration"])
+    return current_duration_sec
 
-
+def create_songlist(user_setlist,database):
+    song_list = []
+    for song_number in user_setlist:
+        for row in database:
+                    if row["number"] == str(song_number):
+                        song_list.append({"number": row["number"], "title": row["title"]})
+    return song_list
 if __name__ == "__main__":
     app.run(debug=True)
