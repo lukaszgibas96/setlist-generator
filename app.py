@@ -48,7 +48,12 @@ def edit_song(number):
         song = find_song_row_by_number(number, songs)
         current_title = song["title"]
         current_duration = song["duration"]
-        return render_template("edit_song.html", number= number, title= current_title, duration= current_duration)
+        return render_template(
+                "edit_song.html", 
+                number= number, 
+                title= current_title, 
+                duration= current_duration
+                )
 
     elif request.method == "POST":
         new_title = request.form["title"]
@@ -60,9 +65,21 @@ def edit_song(number):
                 flash(f"Song {number} -  successfully updated in database!")
                 return redirect("/songs")
             else:
-                return render_template("edit_song.html", error= "Invalid song duration format. Please, use mm:ss format.", number = number, title= new_title, duration= new_duration)
+                return render_template(
+                        "edit_song.html", 
+                        error= "Invalid song duration format. Please, use mm:ss format.", 
+                        number = number, 
+                        title= new_title, 
+                        duration= new_duration
+                        )
         else:
-            return render_template("edit_song.html", error= "Please, use title w/o polish characters", number = number,title = new_title, duration= new_duration)
+            return render_template(
+                    "edit_song.html", 
+                    error= "Please, use title w/o polish characters", 
+                    number = number,
+                    title = new_title, 
+                    duration= new_duration
+                    )
 
 @app.route("/home")
 def home():
@@ -114,10 +131,25 @@ def create_setlist():
         setlist = request.form.getlist("song")
         bis = request.form.getlist("bis")
         current_duration_sec = calculate_setlist_duration(setlist,songs)
+        current_bis_duration_sec = calculate_setlist_duration(bis,songs)
+        total_duration_sec = current_duration_sec + current_bis_duration_sec
         if action == "calculate":
             minutes, seconds = convert_sec_to_time(current_duration_sec)
+            bis_minutes, bis_seconds = convert_sec_to_time(current_bis_duration_sec)
+            total_minutes, total_sec = convert_sec_to_time(total_duration_sec)
             current_duration = f"{minutes}min {seconds}sec"
-            return render_template("create_setlist.html",intro=intro, soundcheck=soundcheck, setlist=setlist, bis=bis, current_duration=current_duration)
+            current_bis_duration = f"{bis_minutes}min {bis_seconds}sec"
+            total_duration = f"{total_minutes}min {total_sec}sec"
+            return render_template(
+                        "create_setlist.html",
+                        intro=intro, 
+                        soundcheck=soundcheck, 
+                        setlist=setlist, 
+                        bis=bis, 
+                        current_duration=current_duration, 
+                        current_bis_duration= current_bis_duration, 
+                        total_duration=total_duration
+                        )
         elif action == "generate":
             event_date = session["date"]
             event_place = session["place"]
@@ -131,20 +163,47 @@ def create_setlist():
                                 intro,
                                 setlist,
                                 current_duration_sec,
-                                bis)
+                                bis
+                                )
             flash("Setlist successfuly generated and saved!")
         elif action == "add_row":
             setlist.append("")
-            return render_template("create_setlist.html", intro=intro, soundcheck=soundcheck, setlist=setlist, bis=bis)
+            return render_template(
+                            "create_setlist.html", 
+                            intro=intro, 
+                            soundcheck=soundcheck, 
+                            setlist=setlist, 
+                            bis=bis
+                            )
         elif action == "remove_row":
-            setlist.pop()
-            return render_template("create_setlist.html", intro=intro, soundcheck=soundcheck, setlist=setlist, bis=bis)
+            if setlist:
+                setlist.pop()
+            return render_template(
+                "create_setlist.html", 
+                intro=intro, 
+                soundcheck=soundcheck, 
+                setlist=setlist, 
+                bis=bis
+                )
         elif action == "add_bis":
             bis.append("")
-            return  render_template("create_setlist.html", intro=intro, soundcheck=soundcheck,setlist=setlist, bis=bis)
+            return  render_template(
+                    "create_setlist.html", 
+                    intro=intro, 
+                    soundcheck=soundcheck,
+                    setlist=setlist, 
+                    bis=bis
+                    )
         elif action == "remove_bis":
-            bis.pop()
-            return  render_template("create_setlist.html", intro=intro, soundcheck=soundcheck,setlist=setlist, bis=bis)
+            if bis:
+                bis.pop()
+            return  render_template(
+                    "create_setlist.html", 
+                    intro=intro, 
+                    soundcheck=soundcheck,
+                    setlist=setlist, 
+                    bis=bis
+                    )
         return redirect("/songs")
 
     elif request.method == "GET":
