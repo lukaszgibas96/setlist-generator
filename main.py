@@ -26,6 +26,8 @@ def run_application():
                 if status == "end":
                     continue
                 bis,_,status = get_song_list_from_user(songs, section = "bis")
+                if status == "end":
+                    continue
                 generate_pdf_file(event_date,
                                   event_place,
                                   soundcheck,
@@ -73,10 +75,18 @@ def load_songs_from_csv():
                 reader = csv.DictReader(file)
                 for row in reader:
                     songs.append({"number": row["number"], "title": row["title"], "duration": row["duration"]})
+        songs = sort_songs(songs)
         return songs
     except FileNotFoundError:
         sys.exit("songs.csv not found.")
 
+def sort_songs(songs):
+    def internal_func(x):
+        return int(x["number"])
+
+    songs.sort(key=internal_func)
+    return songs
+    
 def get_menu_choice():
 
     while True:
@@ -270,7 +280,8 @@ def ask_to_continue_edit():
             print("Invalid input. Please, use YES or NO")
 
 def save_songs_to_CSV(songs):
-    
+
+    songs = sort_songs(songs)
     with open("songs.csv", "w",newline="\n") as file:
         writer = csv.DictWriter(file, fieldnames= ["number", "title", "duration"])
         writer.writeheader()
