@@ -154,14 +154,19 @@ def get_event_details():
 
 @app.route("/generate_setlist/songs", methods= ["GET", "POST"])
 def create_setlist():
+    if  not "date" in session or not "place" in session:
+        flash("Session expired. Please, fill the form again.")
+        return redirect("/generate_setlist/get_event_details")
     song_quantity = 5
     if request.method == "POST":
         songs = load_songs_from_csv() 
         action = request.form["action"]   
         intro = request.form["intro"]
-        soundcheck = request.form["soundcheck"]
+        soundcheck = request.form["soundcheck"].strip()
         setlist = request.form.getlist("song")
         bis = request.form.getlist("bis")
+        clear_setlist = clear_blank_position_from_list(setlist)
+        clear_bis = clear_blank_position_from_list(bis)
         data_form = {
                      "soundcheck": soundcheck,
                      "intro": intro,
@@ -170,17 +175,15 @@ def create_setlist():
                      }
         
         if action == "calculate":
-            clear_setlist = clear_blank_position_from_list(setlist)
-            clear_bis = clear_blank_position_from_list(bis)
-            if not check_songs_input(soundcheck,clear_setlist,clear_bis,songs) == None:
-                wrong_songs = check_songs_input(soundcheck,clear_setlist,clear_bis,songs)
+            error = validate_setlist_form(soundcheck,clear_setlist,clear_bis,songs)
+            if error:
                 return render_template("create_setlist.html",
-                                       error =f"song/s {','.join(wrong_songs)} not exist in database",
-                                       **data_form
-                                       )
+                                        error = error,
+                                        **data_form
+                                        )
 
-            current_duration_sec = calculate_setlist_duration(setlist,songs)
-            current_bis_duration_sec = calculate_setlist_duration(bis,songs)
+            current_duration_sec = calculate_setlist_duration(clear_setlist,songs)
+            current_bis_duration_sec = calculate_setlist_duration(clear_bis,songs)
             total_duration_sec = current_duration_sec + current_bis_duration_sec
             minutes, seconds = convert_sec_to_time(current_duration_sec)
             bis_minutes, bis_seconds = convert_sec_to_time(current_bis_duration_sec)
@@ -196,20 +199,18 @@ def create_setlist():
                         total_duration=total_duration
                         )
         elif action == "generate":
-            clear_setlist = clear_blank_position_from_list(setlist)
-            clear_bis = clear_blank_position_from_list(bis)
-            if not check_songs_input(soundcheck,clear_setlist,clear_bis,songs) == None:
-                            wrong_songs = check_songs_input(soundcheck,clear_setlist,clear_bis,songs)
-                            return render_template("create_setlist.html",
-                                                   error =f"song/s {','.join(wrong_songs)} not exist in database",
-                                                   **data_form
-                                                   )
+            error = validate_setlist_form(soundcheck,clear_setlist,clear_bis,songs)
+            if error:
+                return render_template("create_setlist.html",
+                                        error = error,
+                                        **data_form
+                                        )
             event_date = session["date"]
             event_place = session["place"]
-            current_duration_sec = calculate_setlist_duration(setlist,songs)
+            current_duration_sec = calculate_setlist_duration(clear_setlist,songs)
             soundcheck = find_song_row_by_number(soundcheck,songs)
-            setlist = create_songlist(setlist,songs)
-            bis = create_songlist(request.form.getlist("bis"),songs)
+            setlist = create_songlist(clear_setlist,songs)
+            bis = create_songlist(clear_bis,songs)
             
             generate_pdf_file(  event_date,
                                 event_place,
@@ -220,6 +221,7 @@ def create_setlist():
                                 bis
                                 )
             flash("Setlist successfuly generated and saved!")
+            return redirect("/songs")
         elif action == "add_row":
             setlist.append("")
             return render_template(
@@ -321,26 +323,38 @@ def list_wrong_songs(song_list,database):
             wrong_list.append(song)
     return wrong_list
 
-def check_songs_input(soundcheck,setlist,bis,database):
+def check_songs_input(setlist,bis,database):
     wrong = []
-    if not song_number_exists(soundcheck,database):
-        wrong.append(soundcheck)
+
     if not check_song_list(setlist,database):
         wrong_songs = list_wrong_songs(setlist,database)
         wrong.extend(wrong_songs)
     if not check_song_list(bis,database):
         wrong_bis = list_wrong_songs(bis,database)
         wrong.extend(wrong_bis)
-    
-    if len(wrong) > 0:
-        return wrong
+    return wrong
 
 def clear_blank_position_from_list(setlist):
     clear_setlist = []
     for song in setlist:
-        if song != "":
-            clear_setlist.append(song)
+        if song.strip() != "":
+            clear_setlist.append(song.strip())
     return clear_setlist
-                
+
+def validate_setlist_form(soundcheck,setlist,bis,songs):
+    
+    if not soundcheck:
+        error = "soundcheck cannot be empty"
+        return error           
+    if not song_number_exists(soundcheck,songs):
+        error =f"song {soundcheck} does not exist in database"
+        return error
+    wrong_songs = check_songs_input(setlist,bis,songs)
+    if wrong_songs:
+        error = f"song/s {','.join(wrong_songs)} not exist in database"
+        return error     
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
