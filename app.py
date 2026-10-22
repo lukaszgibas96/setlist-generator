@@ -1,4 +1,4 @@
-from flask import Flask , render_template , request, redirect, flash, session
+from flask import Flask , render_template , request, redirect, flash, session, send_file, send_from_directory
 from flask import jsonify
 from main import load_songs_from_csv, save_songs_to_CSV, check_song_number_format, check_polish_character, check_duration_format, song_number_exists, overwrite_song_title_and_duration, convert_time_to_sec, convert_sec_to_time, check_place_format
 from pdf_generator import generate_pdf_file
@@ -212,7 +212,7 @@ def create_setlist():
             setlist = create_songlist(clear_setlist,songs)
             bis = create_songlist(clear_bis,songs)
             
-            generate_pdf_file(  event_date,
+            file_name = generate_pdf_file(  event_date,
                                 event_place,
                                 soundcheck,
                                 intro,
@@ -220,8 +220,9 @@ def create_setlist():
                                 current_duration_sec,
                                 bis
                                 )
+            session["pdf"] = file_name
             flash("Setlist successfuly generated and saved!")
-            return redirect("/songs")
+            return redirect("/generate_setlist/download")
         elif action == "add_row":
             setlist.append("")
             return render_template(
@@ -267,6 +268,22 @@ def create_setlist():
         for _ in range(song_quantity):
             setlist.append("")
         return render_template("create_setlist.html", setlist = setlist, bis = [""])  
+@app.route("/generate_setlist/download", methods=["GET","POST"])
+
+def download_pdf():
+    if not "pdf" in session:
+        flash("PDF has not been generated. Please, generate new file.", "warning")
+        return redirect("/generate_setlist/get_event_details")
+    file_name = session["pdf"]
+    if request.method == "GET":
+        return render_template("download_pdf.html")
+    if request.method == "POST":
+        print(file_name)
+        return send_from_directory("output",
+                                    file_name,
+                                    as_attachment = True
+                                    )
+
 
 # ----------------- auxiliary functions -----------------
 

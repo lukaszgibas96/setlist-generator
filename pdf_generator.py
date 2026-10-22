@@ -134,9 +134,9 @@ def generate_pdf_file(date,
         pdf.ln(5)
 
 # Save pdf file
-    pdf.output(
-        f"output/{date}_souldrone_{sanitize_place_name(place)}_setlist_{convert_setlist_duration_to_rounded_minutes(setlist_duration)}min.pdf"
-                )
+    file_name = f"{date}_souldrone_{sanitize_place_name(place)}_setlist_{convert_setlist_duration_to_rounded_minutes(setlist_duration)}min.pdf"
+    pdf.output(f"output/{file_name}")
+    return file_name
 
 
 
