@@ -155,7 +155,7 @@ def get_event_details():
 @app.route("/generate_setlist/songs", methods= ["GET", "POST"])
 def create_setlist():
     if  not "date" in session or not "place" in session:
-        flash("Session expired. Please, fill the form again.")
+        flash("Session expired. Please enter date and place first.", "warning")
         return redirect("/generate_setlist/get_event_details")
     song_quantity = 5
     if request.method == "POST":

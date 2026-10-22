@@ -1,7 +1,12 @@
 <h1> Setlist Generator - Songs</h1>
 
-{% for message in get_flashed_messages() %}
-    <p style="color:green">{{message}}</p>
+<style>
+    .success { color: green; }
+    .warning { color: orange; }
+</style>
+
+{% for category, message in get_flashed_messages(with_categories=true) %}
+    <p class="{{category}}">{{message}}</p>
 
 {% endfor %}
 
