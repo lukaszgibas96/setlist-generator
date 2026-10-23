@@ -1,9 +1,20 @@
-<h1> Setlist Generator - Songs</h1>
+<!DOCTYPE html>
+<html>
 
-<style>
-    .success { color: green; }
-    .warning { color: orange; }
-</style>
+<head>
+
+    <title>setlist generator</title>
+    <style>
+        .success { color: green; }
+        .warning { color: orange;}
+        .error   { color: red;} 
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+
+<h1> Setlist Generator - Songs</h1>
 
 {% for category, message in get_flashed_messages(with_categories=true) %}
     <p class="{{category}}">{{message}}</p>
@@ -19,3 +30,5 @@
 {% block content %}
 
 {% endblock %}
+</body>
+</html>

@@ -27,7 +27,7 @@ def add_song():
                     if check_duration_format(new_duration):
                         songs.append({"number": new_number, "title": new_title, "duration": new_duration})
                         save_songs_to_CSV(songs)
-                        flash("New song successfully added to database!")
+                        flash("New song successfully added to database!", "success")
                         return redirect("/songs") 
                     else:
                         return render_template("add_song.html", error= "Invalid duration format", number= new_number, title= new_title, duration= new_duration)
@@ -63,7 +63,7 @@ def edit_song(number):
             if check_duration_format(new_duration):
                 overwrite_song_title_and_duration(number,new_title,new_duration,songs)
                 save_songs_to_CSV(songs)
-                flash(f"Song {number} -  successfully updated in database!")
+                flash(f"Song {number} -  successfully updated in database!", "success")
                 return redirect("/songs")
             else:
                 return render_template(
@@ -107,7 +107,7 @@ def confirm_remove_song(number):
     elif request.method == "POST":
         songs.remove(song)
         save_songs_to_CSV(songs)
-        flash(f'Song "{number} - {song["title"]}" successfully REMOVED from database!')
+        flash(f'Song "{number} - {song["title"]}" successfully REMOVED from database!', "success")
         return redirect("/songs")
     
 @app.route("/generate_setlist/get_event_details", methods =["GET", "POST"])  
@@ -221,7 +221,7 @@ def create_setlist():
                                 bis
                                 )
             session["pdf"] = file_name
-            flash("Setlist successfuly generated and saved!")
+            flash("Setlist successfuly generated and saved!", "success")
             return redirect("/generate_setlist/download")
         elif action == "add_row":
             setlist.append("")
@@ -278,7 +278,6 @@ def download_pdf():
     if request.method == "GET":
         return render_template("download_pdf.html")
     if request.method == "POST":
-        print(file_name)
         return send_from_directory("output",
                                     file_name,
                                     as_attachment = True
