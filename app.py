@@ -123,38 +123,35 @@ def get_event_details():
         max_length = 200
         event_date = request.form["event_date"]
         event_place = request.form["event_place"].strip()
-        if check_date_format(event_date):
-            date_object = check_date_format(event_date)
-            if check_if_not_past_date(date_object):
-                session["date"] = event_date
-            else:
-                return render_template("get_event_details.html",
-                                       error= "Invalid date. Date cannot be from past",
-                                       event_date = event_date,
-                                       event_place = event_place
-                                        )
-        else:
+        date_object = check_date_format(event_date)
+        if not date_object:
             return render_template("get_event_details.html", 
                                     error= "Invalid date format. Please use YYYY-MM-DD",
                                     event_date = event_date,
                                     event_place = event_place
-                                    )      
-        if check_place_format(event_place):
-            if check_place_length(event_place,max_length):
-                session["place"] = event_place
-            else:
+                                    )
+        if not check_if_not_past_date(date_object):
                 return render_template("get_event_details.html",
-                                        error= f"Place name is too long. Maximum amount cannot exceed {max_length} characters.",
+                                        error= "Invalid date. Date cannot be from past",
                                         event_date = event_date,
                                         event_place = event_place
                                         )
-        else:
+        
+                  
+        if not check_place_format(event_place):
             return render_template("get_event_details.html",
                                     error = r'Invalid place format. Place can not include /\:*?"<>| characters',
                                     event_date = event_date,
                                     event_place = event_place
                                     )
-
+        if not check_place_length(event_place,max_length):
+                return render_template("get_event_details.html",
+                                        error= f"Place name is too long. Maximum amount cannot exceed {max_length} characters.",
+                                        event_date = event_date,
+                                        event_place = event_place
+                                        )
+        session["place"] = event_place
+        session["date"] = event_date
         return redirect("/generate_setlist/songs")
     elif request.method == "GET":
         return render_template("get_event_details.html")  
@@ -373,6 +370,10 @@ def validate_setlist_form(soundcheck,setlist,bis,songs):
     if not song_number_exists(soundcheck,songs):
         error =f"soundcheck song {soundcheck} does not exist in database"
         return error
+    if len(setlist) == 0:
+        error= "Setlist cannot be empty."
+        return error
+    
     wrong_songs = check_songs_input(setlist,bis,songs)
     if wrong_songs:
         error = f"song/s {','.join(wrong_songs)} not exist in database"
