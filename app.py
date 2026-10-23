@@ -47,7 +47,7 @@ def edit_song(number):
     songs = load_songs_from_csv()
     song = find_song_row_by_number(number, songs)
     if not song:
-            flash("Song does not exist in database.", "warning")
+            flash("Song does not exist in database.", "error")
             return redirect("/songs")
     if request.method == "GET":
         
