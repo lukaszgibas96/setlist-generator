@@ -45,8 +45,12 @@ def add_song():
 def edit_song(number):
 
     songs = load_songs_from_csv()
+    song = find_song_row_by_number(number, songs)
+    if not song:
+            flash("Song does not exist in database.", "warning")
+            return redirect("/songs")
     if request.method == "GET":
-        song = find_song_row_by_number(number, songs)
+        
         current_title = song["title"]
         current_duration = song["duration"]
         return render_template(
@@ -102,6 +106,9 @@ def remove_song():
 def confirm_remove_song(number):
     songs = load_songs_from_csv()
     song= find_song_row_by_number(number, songs)
+    if not song:
+            flash("Song does not exist in database.", "error")
+            return redirect("/remove")
     if request.method == "GET":
         return render_template("remove_confirm.html", number= number, title= song["title"])
     elif request.method == "POST":
@@ -291,7 +298,8 @@ def find_song_row_by_number(number,database):
     for song in database:
         if song["number"] == str(number):
             return song
-        
+
+    
 def calculate_setlist_duration(songlist,database):
     current_duration_sec = 0
     for song in songlist:
@@ -363,7 +371,7 @@ def validate_setlist_form(soundcheck,setlist,bis,songs):
         error = "soundcheck cannot be empty"
         return error           
     if not song_number_exists(soundcheck,songs):
-        error =f"song {soundcheck} does not exist in database"
+        error =f"soundcheck song {soundcheck} does not exist in database"
         return error
     wrong_songs = check_songs_input(setlist,bis,songs)
     if wrong_songs:
