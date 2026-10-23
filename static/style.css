@@ -1,0 +1,9 @@
+/* background */
+body {background-color: rgb(29, 29, 29)}
+
+
+/* style for errors*/
+    .success { color: rgb(44, 202, 44); }
+    .warning { color: rgb(219, 163, 58);}
+    .error   { color: rgb(199, 65, 65);} 
+
