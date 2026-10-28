@@ -2,10 +2,10 @@
 
 {% block content %}
 
-<h1> Songs list </h1>
-<ul>
+<h1 class="section_header"> songs list </h1>
+<ul class="song_list">
     {%for row in songs %}
-    <li>{{row["number"]}}. {{row["title"]}} - {{row["duration"]}} <a href="/edit_song/{{row['number']}}">Edit</a></li>
+    <li><span>{{row["number"]}}. {{row["title"]}} - {{row["duration"]}}</span> <a href="/edit_song/{{row['number']}}">Edit</a></li>
     {%endfor%}
 </ul>
 

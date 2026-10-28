@@ -3,12 +3,12 @@
 {% block content %}
 
 {% if error %}
-    <p style="color:red">{{error}}</p>
+    <p class="error">{{error}}</p>
 {% endif %}
 
 <form method="POST" action="/generate_setlist/download">
     <p></p>
-    <button type= "submit"> Download PDF Setlist </button>
+    <button class="primary" type= "submit"> Download PDF Setlist </button>
 
 </form>
 

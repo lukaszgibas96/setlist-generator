@@ -2,16 +2,16 @@
 
 {% block content %}
 
-<h1> Insert Event Details </h1>
+<h1 class="section_header"> Insert Event Details </h1>
 
     {% if error %}
-        <p style="color:red">{{error}}</p>
+        <p class="error">{{error}}</p>
     {%endif%}
 
     <form method="POST" action="/generate_setlist/get_event_details">
         <label> Event Date <input type="text" name="event_date" value= "{{event_date}}"> </label>
         <label> Event Place <input type="text" name="event_place" value="{{event_place}}"> </label>
-        <button type="submit"> Next</button>
+        <button class="primary" type="submit"> Next</button>
 
     </form>
 

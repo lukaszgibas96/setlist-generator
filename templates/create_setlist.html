@@ -3,10 +3,10 @@
 {% block content %}
 <button type="submit" name="action" value="calculate" style="position:absolute; left:-9999px"></button>
 
-<h1> Create setlist </h1>
+<h1 class="section_header"> Create setlist </h1>
 
     {% if error %}
-        <p style="color:red"> {{error}} </p>
+        <p class="error"> {{error}} </p>
     {%endif%}
 
     {% if current_duration %}
@@ -22,7 +22,7 @@
         <button type="submit" name="action" value="calculate" style="position:absolute; left:-9999px"></button>
         <label> Soundcheck <input type="text" name="soundcheck" value="{{soundcheck}}"></label>
         <p><label> Intro <input type="text" name="intro" value="{{intro}}"></label></p>
-<h1> Setlist </h1>
+<h1 class="section_header"> Setlist </h1>
         
         {% for song in setlist %}
 
@@ -31,11 +31,11 @@
         {% endfor%}
 
         <button type="submit" name="action" value="add_row"> Add song </button>
-        <button type="submit" name="action" value="remove_row"> Remove last position </button>
+        <button type="submit" name="action" value="remove_row"> Remove last song </button>
 
 
 
-<h1> Bis (optional) </h1>
+<h1 class="section_header"> Bis (optional) </h1>
         
         {% for song in bis %}
 
@@ -45,7 +45,7 @@
         <button type="submit" name="action" value="remove_bis"> Remove bis song </button>
         <p></p>
         <button type="submit" name="action" value="calculate"> Calculate time </button>
-        <button type="submit" name="action" value="generate"> Generate Setlist </button>
+        <button class="primary" type="submit" name="action" value="generate"> Generate Setlist </button>
 
     </form>
 
