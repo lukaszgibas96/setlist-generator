@@ -29,10 +29,10 @@
         <p><label> song {{loop.index}} <input type="text" name="song" value="{{song}}"></label></p>
         
         {% endfor%}
-
+        <div class="button_row">
         <button type="submit" name="action" value="add_row"> Add song </button>
         <button type="submit" name="action" value="remove_row"> Remove last song </button>
-
+        </div>
 
 
 <h1 class="section_header"> Bis (optional) </h1>
@@ -41,12 +41,15 @@
 
         <p><label> bis {{loop.index}} <input type="text" name="bis" value="{{song}}"></label></p>
         {%endfor%}
+            <div class="button_row">
         <button type="submit" name="action" value="add_bis"> Add bis </button>
         <button type="submit" name="action" value="remove_bis"> Remove bis song </button>
+            </div>
         <p></p>
+            <div class="actions">
         <button type="submit" name="action" value="calculate"> Calculate time </button>
         <button class="primary" type="submit" name="action" value="generate"> Generate Setlist </button>
-
+            </div>  
     </form>
 
 

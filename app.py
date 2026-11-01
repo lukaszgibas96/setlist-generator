@@ -112,11 +112,15 @@ def confirm_remove_song(number):
     if request.method == "GET":
         return render_template("remove_confirm.html", number= number, title= song["title"])
     elif request.method == "POST":
-        songs.remove(song)
-        save_songs_to_CSV(songs)
-        flash(f'Song "{number} - {song["title"]}" successfully REMOVED from database!', "success")
-        return redirect("/songs")
-    
+        action = request.form["action"]
+        if action == "remove":
+            songs.remove(song)
+            save_songs_to_CSV(songs)
+            flash(f'Song "{number} - {song["title"]}" successfully REMOVED from database!', "success")
+            return redirect("/songs")
+        elif action == "cancel":
+            flash('Removal cancelled', "warning")
+            return redirect("/songs")
 @app.route("/generate_setlist/get_event_details", methods =["GET", "POST"])  
 def get_event_details():
     if request.method == "POST":

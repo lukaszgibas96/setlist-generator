@@ -2,11 +2,12 @@
 
 {% block content %}
     <h1 class="section_header">Confirm remove action</h1>
-    <p> Do you want remove the song " {{number}} - {{title}} " from database? </p>
+    <p class="confirm_text"> Remove the song <span class="bold_confirm">{{number}} - {{title}}</span></p>
     <form method="POST" action="/remove/{{number}}">
-        <button class="primary" type="submit"> Remove </button>  
-        <a href="/songs"> Cancel </a>
-
+        <div class="actions">
+        <button type="submit" name="action" value="cancel"> Cancel </button>
+        <button class="primary" type="submit" name="action" value="remove"> Remove </button>  
+        </div>
     </form>
     
 
