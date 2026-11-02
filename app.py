@@ -219,8 +219,8 @@ def create_setlist():
             event_place = session["place"]
             current_duration_sec = calculate_setlist_duration(clear_setlist,songs)
             soundcheck = find_song_row_by_number(soundcheck,songs)
-            setlist = create_songlist(clear_setlist,songs)
-            bis = create_songlist(clear_bis,songs)
+            setlist = create_songlist_number_title(clear_setlist,songs)
+            bis = create_songlist_number_title(clear_bis,songs)
             
             file_name = generate_pdf_file(  event_date,
                                 event_place,
@@ -319,7 +319,7 @@ def calculate_setlist_duration(songlist,database):
             current_duration_sec += convert_time_to_sec(current_song["duration"])
     return current_duration_sec
 
-def create_songlist(user_setlist,database):
+def create_songlist_number_title(user_setlist,database):
     song_list = []
     for song_number in user_setlist:
         for row in database:
