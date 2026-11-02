@@ -129,6 +129,48 @@ input:focus{
     border-color: var(--accent);
 }
 
+.info_label{
+    display:block;
+    border: thin solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    margin: 0 0 30px 0;
+    border-left: 4px solid var(--success);
+    background-color: var(--surface);
+    color: var(--muted);
+    text-transform: uppercase;
+}
+.info_label p{
+    border-bottom: thin solid var(--border);
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+.info_label p:last-child{
+        border-bottom: none;
+}
+.bold_time{
+    color: var(--text);
+    font-weight: bold;
+    text-transform: none;
+}
+.download_label{
+    display:block;
+    border: thin solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    margin: 0 0 30px 0;
+    border-left: 4px solid var(--border);
+    background-color: var(--surface);
+    color: var(--muted);
+    text-transform: uppercase;
+}
+.file_name{
+    display: block;
+    margin-top: 5px;
+    color: var(--text);
+    word-break: break-all;
+    text-transform: none;
+}
 button {
     padding: 12px 18px;
     margin: 4px 4px 4px 0;

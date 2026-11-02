@@ -121,6 +121,8 @@ def confirm_remove_song(number):
         elif action == "cancel":
             flash('Removal cancelled', "warning")
             return redirect("/songs")
+        else:
+            return render_template("remove_confirm.html", number= number, title= song["title"])
 @app.route("/generate_setlist/get_event_details", methods =["GET", "POST"])  
 def get_event_details():
     if request.method == "POST":
@@ -229,7 +231,7 @@ def create_setlist():
                                 bis
                                 )
             session["pdf"] = file_name
-            flash("Setlist successfuly generated and saved!", "success")
+            flash("Setlist successfully generated!", "success")
             return redirect("/generate_setlist/download")
         elif action == "add_row":
             setlist.append("")
@@ -284,14 +286,22 @@ def download_pdf():
         return redirect("/generate_setlist/get_event_details")
     file_name = session["pdf"]
     if request.method == "GET":
-        return render_template("download_pdf.html")
+        return render_template("download_pdf.html",file_name=file_name)
     if request.method == "POST":
-        return send_from_directory("output",
+        action = request.form["action"]
+        if action == "download":
+            return send_from_directory("output",
                                     file_name,
                                     as_attachment = True
                                     )
+        elif action == "generate_other_setlist":
+            session.pop("date",None)
+            session.pop("place",None)
+            session.pop("pdf", None)
+            return redirect("/generate_setlist/get_event_details")
 
-
+        else:
+            return redirect("/generate_setlist/download")
 # ----------------- auxiliary functions -----------------
 
 def find_song_row_by_number(number,database):

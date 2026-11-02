@@ -7,9 +7,16 @@
 {% endif %}
 
 <form method="POST" action="/generate_setlist/download">
-    <p></p>
-    <button class="primary" type= "submit"> Download PDF Setlist </button>
+    
+    <h1 class="section_header">Download setlist</h1>
 
+    <div class="download_label">
+    <p> PDF Setlist File: <span class="file_name">{{file_name}}</span></p>
+    </div>
+    <div class="actions">
+    <button class="primary" type= "submit" name="action" value="download"> Download PDF Setlist </button>
+    <button type="submit" name="action" value="generate_other_setlist">generate other setlist</button>
+    </div>
 </form>
 
 {% endblock %}

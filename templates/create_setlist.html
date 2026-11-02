@@ -9,15 +9,19 @@
         <p class="error"> {{error}} </p>
     {%endif%}
 
+    {% if total_duration %}
+    <div class="info_label">
     {% if current_duration %}
-        <p> Current setlist duration is {{current_duration}}</p>
+        <p> Setlist duration: <span class="bold_time">{{current_duration}}</span></p>
     {%endif%}
     {% if current_bis_duration %}
-        <p> Current bis duration is {{current_bis_duration}}</p>
+        <p> Bis duration: <span class="bold_time">{{current_bis_duration}}</span></p>
     {%endif%}
     {% if total_duration %}
-        <p> Total duration is {{total_duration}}</p>
+        <p> Total duration: <span class="bold_time">{{total_duration}}</span></p>
     {%endif%}
+    </div>
+    {% endif %}
     <form method="POST" action="/generate_setlist/songs">
         <button type="submit" name="action" value="calculate" style="position:absolute; left:-9999px"></button>
         <label> Soundcheck <input type="text" name="soundcheck" value="{{soundcheck}}"></label>
