@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Welcome to Setlist Generator</h2>
-<p>Choose an action from the menu above.</p>
+<h1 class="section_header">Setlist Generator</h1>
+<ol class="home_label">
+    <li>Enter the <span class="info_bold">event date</span> and <span class="info_bold">place</span>.</li>
+    <li>Pick the <span class="info_bold">soundcheck song, intro</span> and <span class="info_bold">setlist</span>, add <span class="info_bold">bis</span> if you need it.</li>
+    <li>Check the <span class="info_bold">total time</span>, <span class="info_bold">generate the PDF</span> and <span class="info_bold">download</span> it.</li>
+</ol>
+
+<nav class="generate_home">
+         <a href="/generate_setlist/get_event_details">generate setlist</a>
+</nav>
 {% endblock %}
