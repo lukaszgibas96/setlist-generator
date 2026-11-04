@@ -3,9 +3,10 @@ from flask import jsonify
 from main import load_songs_from_csv, save_songs_to_CSV, check_song_number_format, check_polish_character, check_duration_format, song_number_exists, overwrite_song_title_and_duration, convert_time_to_sec, convert_sec_to_time, check_place_format
 from pdf_generator import generate_pdf_file
 import datetime as dt
+import os
 
 app = Flask(__name__)
-app.secret_key = "temp"
+app.secret_key = os.environ.get("SECRET_KEY", "dev-only-key")
 
 @app.route("/songs")
 def load_songs():
