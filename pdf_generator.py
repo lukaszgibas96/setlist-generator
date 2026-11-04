@@ -3,9 +3,10 @@ from fpdf.enums import Align
 from PIL import Image
 import datetime as dt
 import sys
+import os
 
-
-image_location = "assets/logo.png"
+location = os.path.dirname(os.path.abspath(__file__))
+image_location = os.path.join(location,"assets/logo.png")
 
 
 
@@ -25,7 +26,7 @@ def generate_pdf_file(date,
     try:
         pdf.add_font(
                     family= font_name,
-                    fname= "assets/Tippa.ttf"
+                    fname= os.path.join(location,"assets/Tippa.ttf")
                     )
     except FileNotFoundError:
         font_name = "Times"
@@ -135,7 +136,7 @@ def generate_pdf_file(date,
 
 # Save pdf file
     file_name = f"{date}_souldrone_{sanitize_place_name(place)}_setlist_{convert_setlist_duration_to_rounded_minutes(setlist_duration)}min.pdf"
-    pdf.output(f"output/{file_name}")
+    pdf.output(os.path.join(location,f"output/{file_name}"))
     return file_name
 
 

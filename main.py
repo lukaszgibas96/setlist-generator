@@ -2,6 +2,9 @@ import csv
 from pdf_generator import generate_pdf_file
 import datetime as dt
 import sys
+import os
+
+location = os.path.dirname(os.path.abspath(__file__))
 
 def main():
 
@@ -71,7 +74,7 @@ def load_songs_from_csv():
     try:
         songs = []
         
-        with open("songs.csv") as file:
+        with open(os.path.join(location,"songs.csv")) as file:
                 reader = csv.DictReader(file)
                 for row in reader:
                     songs.append({"number": row["number"], "title": row["title"], "duration": row["duration"]})
@@ -282,7 +285,7 @@ def ask_to_continue_edit():
 def save_songs_to_CSV(songs):
 
     songs = sort_songs(songs)
-    with open("songs.csv", "w",newline="\n") as file:
+    with open(os.path.join(location,"songs.csv"), "w",newline="\n") as file:
         writer = csv.DictWriter(file, fieldnames= ["number", "title", "duration"])
         writer.writeheader()
         writer.writerows(songs)
